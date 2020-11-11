@@ -17,18 +17,18 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>Nene&#39;s Blog</title>
+  <title>Tag: php | Nene&#39;s Blog</title>
   <meta name="description" content="Welcome my frimend">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NeNe&#39;s Blog">
-<meta property="og:url" content="http://example.com/index.html">
+<meta property="og:url" content="http://example.com/tags/php/index.html">
 <meta property="og:site_name" content="NeNe&#39;s Blog">
 <meta property="og:description" content="Welcome my frimend">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="J Nene">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://example.com/index.html">
+  <link rel="canonical" href="http://example.com/tags/php/index.html">
   
     <link rel="alternate" href="/atom.xml" title="NeNe&#39;s Blog" type="application/atom+xml">
   
@@ -266,150 +266,50 @@
 
   
   <main class="main" role="main">
-  
-  
-    <div class="content">
-  <article id="post-my-first-blog" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article class="content article article-tags post-type-list" itemscope="">
+    <header class="article-header">
+      <h1 itemprop="name" class="hidden-xs">Tag: php</h1>
+      <p class="text-muted hidden-xs">Total 1 articles</p>
+      <nav role="navigation" id="nav-main" class="okayNav">
+        <ul>
+          <li><a href="/tags">All</a></li>
+          
+          <li><a href="/tags/php/">php</a></li>
+          
+        </ul>
+      </nav>
+    </header>
+    <!-- /header -->
+    <div class="article-body">
+      <div class="row">
+        
+<div class="col-md-6">
     
-    <div class="article-header">
-      
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/11/10/my-first-blog/">正则表达式</a>
-    </h1>
-  
-
-      
-      <div class="article-meta">
-        <span class="article-date">
-    <i class="icon icon-calendar-check"></i>
-	<a href="/2020/11/10/my-first-blog/" class="article-date">
-	  <time datetime="2020-11-10T13:30:00.000Z" itemprop="datePublished">2020-11-10</time>
-	</a>
-</span>
-        
-        
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/php/" rel="tag">php</a>
-  </span>
-
-
-        
-
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/11/10/my-first-blog/#comments" class="article-comment-link">Comments</a></span>
-        
-      </div>
-    </div>
-    <div class="article-entry marked-body" itemprop="articleBody">
-      
-        <h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><h2 id="000x00-正则表达式介绍"><a href="#000x00-正则表达式介绍" class="headerlink" title="000x00 正则表达式介绍"></a>000x00 正则表达式介绍</h2><blockquote>
-<p>正则表达式是对一组字符串的描述，通过这种描述可以匹配到我们想要的字符串，正则表达式通常和一些函数配合使用来对字符串进行查找、修改、删除等功能。</p>
-</blockquote>
-<h2 id="001x00-正则表达式语法"><a href="#001x00-正则表达式语法" class="headerlink" title="001x00     正则表达式语法"></a>001x00     正则表达式语法</h2><blockquote>
-<p>正则表达式由2部分构成：普通字符和元字符。<br>普通字符没有什么特殊含义，就代表着字符本身；元字符则是描述了一组符合条件的字符，例如元字符“ \d ”就表示匹配一个0-9的数字，它可以用“ [0-9] ”来代替。</p>
-</blockquote>
-<h3 id="001x01-常用元字符介绍"><a href="#001x01-常用元字符介绍" class="headerlink" title="001x01 常用元字符介绍"></a>001x01 常用元字符介绍</h3><ul>
-<li><p>\d ：匹配任意一个十进制数字，等价于 [0-9]</p>
-</li>
-<li><p>\D：匹配除了任意一个十进制数字以外的字符，等价于 [^0-9]</p>
-</li>
-<li><p>\s：匹配任意一个空白字符，例如换行符、分页符、制表符</p>
-</li>
-<li><p>\S：匹配除了任意一个空白字符以外的字符</p>
-</li>
-<li><p>\w：匹配任意一个字母、数字或下划线</p>
-</li>
-<li><p>\W：匹配除了任意一个字母、数字、或下划线以外的字符</p>
-</li>
-<li><p>. ：匹配除了换行符以外的任意一个字符</p>
-</li>
-<li><p>* ：匹配0次、1次或多次(任意次)其前面的字符</p>
-</li>
-<li><p>+：匹配1次或多次其前面的字符</p>
-</li>
-<li><p>?：匹配0次或1次其前面的字符</p>
-</li>
-<li><p>{n}：表示其前面的字符正好出现n次</p>
-</li>
-<li><p>{n,}：表示其前面的字符至少出现n次</p>
-</li>
-<li><p>{n,m}：表示其前面的字符出现n-m次</p>
-</li>
-<li><p>^或\A：表示一个字符串的开始</p>
-</li>
-<li><p>$或\Z：表示一个字符串的结束</p>
-</li>
-<li><p>|：匹配两个或者多个模式</p>
-</li>
-<li><p>[]：匹配方括号中的任意一个字符</p>
-</li>
-<li><p>[^]：匹配除了方括号中字符的任意一个字符</p>
-</li>
-<li><p>()：括号中的内容可以作为一个小的正则表达式被匹配。<br>&nbsp; &nbsp; &nbsp; -例如正则表达式/t.st/仅仅可以匹配到字符串“test”，而正则表达式/t(.)st/可以匹配到字符串“test”和”e”。</p>
-</li>
-<li><p>\数字：和括号配合使用，写在括号后面，表示匹配括号所匹配的内容。假设一个正则表达式为/t(e)st\1/，则正则表达式匹配的内容为字符串“teste”</p>
-</li>
-</ul>
-<h2 id="002x00-正则表达式定界符"><a href="#002x00-正则表达式定界符" class="headerlink" title="002x00 正则表达式定界符"></a>002x00 正则表达式定界符</h2><blockquote>
-<p>正则表达式要写在定界符之中，就如同php中的字符串要被引号包裹。常用的定界符为“ / “，除了字母、数字、反斜杠()以外的字符都可以作为正则表达式的定界符。</p>
-</blockquote>
-<h2 id="003x00-正则表达式模式修正符"><a href="#003x00-正则表达式模式修正符" class="headerlink" title="003x00 正则表达式模式修正符"></a>003x00 正则表达式模式修正符</h2><blockquote>
-<p>模式修正符是对正则匹配范围的扩大，写在定界符之后。<br>例如：</p>
-<blockquote>
-<p>正则表达式：/text/  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;作用：仅匹配字符串“text”(区分大小写)。<br>正则表达式/text/i&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;作用：匹配字符串”text”(不区分大小写)</p>
-</blockquote>
-</blockquote>
-<h3 id="003x01-常用的模式修正符"><a href="#003x01-常用的模式修正符" class="headerlink" title="003x01  常用的模式修正符"></a>003x01  常用的模式修正符</h3><ul>
-<li>i：不区分大小写</li>
-<li>u：不进行贪婪匹配</li>
-<li>s：元字符” . “可以匹配到所有的字符，包括换行符。</li>
-<li>m：多行匹配。使用条件：1. 目标字符串包括换行符(\n)  &nbsp;2.正则表达式中出现^或$</li>
-</ul>
-
-      
-    </div>
-    <div class="article-footer">
-      <blockquote class="mt-2x">
-  <ul class="post-copyright list-unstyled">
-    
-    <li class="post-copyright-link hidden-xs">
-      <strong>本文链接：</strong>
-      <a href="http://example.com/2020/11/10/my-first-blog/" title="正则表达式" target="_blank" rel="external">http://example.com/2020/11/10/my-first-blog/</a>
-    </li>
-    
-    <li class="post-copyright-license">
-      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
-    </li>
-  </ul>
-</blockquote>
-
-
-<div class="panel panel-default panel-badger">
+<article class="panel panel-default hover-shadow hover-grow" itemscope itemtype="http://schema.org/BlogPosting">
   <div class="panel-body">
-    <figure class="media">
-      <div class="media-left">
-        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
-          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
-        </a>
-      </div>
-      <div class="media-body">
-        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">Nene</span><small class="ml-1x">A Nene</small></a></h3>
-        <div>Nenen&#39;s</div>
-      </div>
-    </figure>
-  </div>
+     <div class="article-meta">
+       <time datetime="2020-11-10T13:30:00.000Z" itemprop="datePublished">2020-11-10</time>
+     </div>
+     <h3 class="article-title" itemprop="name">
+       <a class="article-link" href="/2020/11/10/my-first-blog/">正则表达式</a>
+     </h3>
+   </div>
+   
+   <div class="panel-footer">
+     
+      <a href="/tags/php/" class="label label-default mb">php</a>
+     
+     
+   </div>
+   
+</article>
+
+
 </div>
 
-
+      </div>
     </div>
   </article>
-  
-</div>
-
-  
-
    
 </main>
 
@@ -469,10 +369,6 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
 
-
-
-
-   
 
 
 
