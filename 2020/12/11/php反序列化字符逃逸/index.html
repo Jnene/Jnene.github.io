@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>php反序列化字符逃逸 | Nene&#39;s Blog</title>
+  <meta name="description" content="PHP序列化与反序列化PHP序列化：serialize序列化是将变量或对象转换成字符串的过程。 例： 12345&lt;?php   $_SESSION[&amp;#x27;id&amp;#x27;]&#x3D;&amp;#x27;001&amp;#x27;;   $_SESSION[&amp;#x27;user&amp;#x27;]&#x3D;&amp;#x27;Ali&amp;#x27;;   var_dump(serialize($_SESSION));?&gt;  输出：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php反序列化字符逃逸">
+<meta property="og:url" content="http://example.com/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/index.html">
+<meta property="og:site_name" content="NeNe&#39;s Blog">
+<meta property="og:description" content="PHP序列化与反序列化PHP序列化：serialize序列化是将变量或对象转换成字符串的过程。 例： 12345&lt;?php   $_SESSION[&amp;#x27;id&amp;#x27;]&#x3D;&amp;#x27;001&amp;#x27;;   $_SESSION[&amp;#x27;user&amp;#x27;]&#x3D;&amp;#x27;Ali&amp;#x27;;   var_dump(serialize($_SESSION));?&gt;  输出：">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/1.png">
+<meta property="article:published_time" content="2020-12-11T04:59:50.000Z">
+<meta property="article:modified_time" content="2020-12-11T12:39:54.557Z">
+<meta property="article:author" content="J Nene">
+<meta property="article:tag" content="php反序列化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="NeNe&#39;s Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/cofess" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Nene</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">A Nene</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">menu.首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/%E5%BD%92%E6%A1%A3">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">menu.归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">menu.分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">menu.标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-项目">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">menu.项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-友链">
+          <a href="/link">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">menu.友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">menu.关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux%E5%91%BD%E4%BB%A4/" rel="tag">linux命令</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php/" rel="tag">php</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag">php反序列化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%96%87%E7%AB%A0%E6%94%B6%E8%97%8F/" rel="tag">文章收藏</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/linux%E5%91%BD%E4%BB%A4/" style="font-size: 13px;">linux命令</a> <a href="/tags/php/" style="font-size: 14px;">php</a> <a href="/tags/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" style="font-size: 13px;">php反序列化</a> <a href="/tags/%E6%96%87%E7%AB%A0%E6%94%B6%E8%97%8F/" style="font-size: 13px;">文章收藏</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/" class="title">php反序列化字符逃逸</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-11T04:59:50.000Z" itemprop="datePublished">2020-12-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/11/php%E4%B8%AD%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0%E6%80%BB%E7%BB%93/" class="title">php中的危险函数总结</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-11T04:46:40.000Z" itemprop="datePublished">2020-12-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/09/phpinfo%E4%B8%AD%E7%9A%84%E6%95%8F%E6%84%9F%E8%AF%8D%E6%B1%87/" class="title">phpinfo中的敏感词汇</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-09T12:10:00.000Z" itemprop="datePublished">2020-12-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/26/PHP-%E4%B8%80%E5%8F%A5%E8%AF%9D/" class="title">PHP一句话</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-26T12:10:00.000Z" itemprop="datePublished">2020-11-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/15/FindEssay/" class="title">FindEssay</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-14T16:00:00.000Z" itemprop="datePublished">2020-11-15</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-php反序列化字符逃逸" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      php反序列化字符逃逸
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/" class="article-date">
+	  <time datetime="2020-12-11T04:59:50.000Z" itemprop="datePublished">2020-12-11</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag">php反序列化</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="PHP序列化与反序列化"><a href="#PHP序列化与反序列化" class="headerlink" title="PHP序列化与反序列化"></a>PHP序列化与反序列化</h1><h2 id="PHP序列化：serialize"><a href="#PHP序列化：serialize" class="headerlink" title="PHP序列化：serialize"></a>PHP序列化：serialize</h2><p>序列化是将变量或对象转换成字符串的过程。</p>
+<p>例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">   $_SESSION[<span class="string">&#x27;id&#x27;</span>]=<span class="string">&#x27;001&#x27;</span>;</span><br><span class="line">   $_SESSION[<span class="string">&#x27;user&#x27;</span>]=<span class="string">&#x27;Ali&#x27;</span>;</span><br><span class="line">   var_dump(serialize($_SESSION));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<p><code>string(46) &quot;a:2:&#123;s:2:&quot;id&quot;;s:3:&quot;001&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</code></p>
+<p>序列化字符格式：</p>
+<p><img src="1.png" alt="1"></p>
+<h2 id="PHP反序列化：unserialize"><a href="#PHP反序列化：unserialize" class="headerlink" title="PHP反序列化：unserialize"></a>PHP反序列化：unserialize</h2><p>反序列化是将字符串转换成变量或对象的过程。</p>
+<p>例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">   $_SESSION[<span class="string">&#x27;id&#x27;</span>]=<span class="string">&#x27;001&#x27;</span>;</span><br><span class="line">   $_SESSION[<span class="string">&#x27;user&#x27;</span>]=<span class="string">&#x27;Ali&#x27;</span>;</span><br><span class="line">   var_dump(unserialize(serialize($_SESSION)));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<p><code>array(2) &#123; [&quot;id&quot;]=&gt; string(3) &quot;001&quot; [&quot;user&quot;]=&gt; string(3) &quot;Ali&quot; &#125;</code></p>
+<h1 id="PHP反序列化字符逃逸"><a href="#PHP反序列化字符逃逸" class="headerlink" title="PHP反序列化字符逃逸"></a>PHP反序列化字符逃逸</h1><p><strong>成因：PHP反序列化时，对序列化格式的严格要求</strong></p>
+<p>序列化后的元素都被{}包裹，我们在序列化对象<code>a:2:&#123;s:2:&quot;id&quot;;s:3:&quot;001&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;</code>后加入<code>;s:3:&quot;age&quot;;s:2:&quot;12&quot;&#125;</code> 对象依然可以成功被反序列化输出。</p>
+<p>例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">   $_SESSION[<span class="string">&#x27;id&#x27;</span>]=<span class="string">&#x27;001&#x27;</span>;</span><br><span class="line">   $_SESSION[<span class="string">&#x27;user&#x27;</span>]=<span class="string">&#x27;Ali&#x27;</span>;</span><br><span class="line">   $str=serialize($_SESSION);</span><br><span class="line">   var_dump($str);</span><br><span class="line">   <span class="keyword">echo</span>  <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">   var_dump(unserialize($str));</span><br><span class="line">   <span class="keyword">echo</span>  <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">   $str=$str.<span class="string">&#x27;;s:3:&quot;age&quot;;s:2:&quot;12&quot;&#125;&#x27;</span>;</span><br><span class="line">   var_dump($str);</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">   var_dump(unserialize($str));</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">string(46) &quot;a:2:&#123;s:2:&quot;id&quot;;s:3:&quot;001&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br><span class="line">array(2) &#123; [&quot;id&quot;]&#x3D;&gt; string(3) &quot;001&quot; [&quot;user&quot;]&#x3D;&gt; string(3) &quot;Ali&quot; &#125;</span><br><span class="line">string(66) &quot;a:2:&#123;s:2:&quot;id&quot;;s:3:&quot;001&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;;s:3:&quot;age&quot;;s:2:&quot;12&quot;&#125;&quot;</span><br><span class="line">array(2) &#123; [&quot;id&quot;]&#x3D;&gt; string(3) &quot;001&quot; [&quot;user&quot;]&#x3D;&gt; string(3) &quot;Ali&quot; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>若反序列化的对象内部不符合序列化格式，反序列化时则不会正确输出。</p>
+<p>例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">   var_dump(unserialize(<span class="string">&#x27;a:2:&#123;s:2:&quot;id&quot;;s:3:&quot;001&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&#x27;</span>));<span class="comment">//符合序列化格式规范，正确输出</span></span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">   var_dump(unserialize(<span class="string">&#x27;a:2:&#123;s:2:&quot;id&quot;;s:3:&quot;001&quot;;s:4:&quot;user&quot;;s:3:&quot;Alii&quot;;&#125;&#x27;</span>));<span class="comment">//user对应的值长度为3，此处为&quot;Alii&quot;长度为4，不会正确输出</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array(2) &#123; [&quot;id&quot;]&#x3D;&gt; string(3) &quot;001&quot; [&quot;user&quot;]&#x3D;&gt; string(3) &quot;Ali&quot; &#125;</span><br><span class="line">bool(false)</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>条件</strong>：存在字符过滤。</p>
+<p>字符过滤分为两种情况：过滤后字符变多或过滤后字符变少。</p>
+<p><strong>程序本身的字符过滤和反序列化对格式的严格要求</strong>构成了php反序列化字符逃逸。</p>
+<hr>
+<h4 id="过滤后字符变多的反序列化字符逃逸"><a href="#过滤后字符变多的反序列化字符逃逸" class="headerlink" title="过滤后字符变多的反序列化字符逃逸"></a>过滤后字符变多的反序列化字符逃逸</h4><p>例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">   <span class="function"><span class="keyword">function</span> <span class="title">filter</span>(<span class="params">$str</span>)</span>&#123;</span><br><span class="line">      $filter=<span class="string">&#x27;/1/i&#x27;</span>;</span><br><span class="line">      <span class="keyword">return</span> preg_replace($filter,<span class="string">&#x27;11&#x27;</span>,$str);</span><br><span class="line">   &#125;</span><br><span class="line">   $_SESSION[<span class="string">&#x27;id&#x27;</span>]=<span class="string">&#x27;001&#x27;</span>;</span><br><span class="line">   $_SESSION[<span class="string">&#x27;user&#x27;</span>]=<span class="string">&#x27;Ali&#x27;</span>;</span><br><span class="line">   var_dump(serialize($_SESSION));</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">   var_dump(filter(serialize($_SESSION)));</span><br><span class="line"><span class="comment">// 输出：</span></span><br><span class="line"><span class="comment">//    string(46) &quot;a:2:&#123;s:2:&quot;id&quot;;s:3:&quot;001&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span></span><br><span class="line"><span class="comment">//    string(47) &quot;a:2:&#123;s:2:&quot;id&quot;;s:3:&quot;0011&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到我们的字符序列化之后经过过滤值“001”变为”0011”。</p>
+<p>若此时我们想要让user的值变为<code>flag</code>。</p>
+<p>我们可以尝试让id的值先为：<code>&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;</code></p>
+<p>序列化输出一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">过滤前：</span><br><span class="line">string(69) &quot;a:2:&#123;s:2:&quot;id&quot;;s:25:&quot;&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br><span class="line">过滤后：</span><br><span class="line">string(69) &quot;a:2:&#123;s:2:&quot;id&quot;;s:25:&quot;&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>因为id字段值里没有<code>1</code>这个字符，所以过滤前后没有任何变化，让id的值为<code>1&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;</code>输出看一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">过滤前：</span><br><span class="line">string(70) &quot;a:2:&#123;s:2:&quot;id&quot;;s:26:&quot;1&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br><span class="line">过滤后：</span><br><span class="line">string(71) &quot;a:2:&#123;s:2:&quot;id&quot;;s:26:&quot;11&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到经过过滤之后id值中的最后一个字符<code>&#125;</code>逃逸出来。多输几个<code>1</code>试试：<code>1111&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;</code>，输出看一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">过滤前：</span><br><span class="line">string(73) &quot;a:2:&#123;s:2:&quot;id&quot;;s:29:&quot;1111&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br><span class="line">过滤后：</span><br><span class="line">string(77) &quot;a:2:&#123;s:2:&quot;id&quot;;s:29:&quot;11111111&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到此时id字段值中的后四个字符<code>g&quot;;&#125;</code>逃逸出来，所以要想让<code>&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;</code>都逃逸出来，我们只要在id值前面加入25个<code>1</code>即可。id值：<code>1111111111111111111111111&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;</code>，输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">过滤前：</span><br><span class="line">string(94) &quot;a:2:&#123;s:2:&quot;id&quot;;s:50:&quot;1111111111111111111111111&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br><span class="line">过滤后：</span><br><span class="line">string(119) &quot;a:2:</span><br><span class="line">&#123;s:2:&quot;id&quot;;s:50:&quot;11111111111111111111111111111111111111111111111111&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>反序列化一下过滤后的值看看：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">var_dump(unserialize(<span class="string">&#x27;a:2:&#123;s:2:&quot;id&quot;;s:50:&quot;11111111111111111111111111111111111111111111111111&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&#x27;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array(2) &#123; [&quot;id&quot;]&#x3D;&gt; string(50) &quot;11111111111111111111111111111111111111111111111111&quot; [&quot;user&quot;]&#x3D;&gt; string(4) &quot;flag&quot; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>成功将user值变为了<code>flag</code>。</p>
+<hr>
+<h4 id="过滤后字符变少的反序列化字符逃逸"><a href="#过滤后字符变少的反序列化字符逃逸" class="headerlink" title="过滤后字符变少的反序列化字符逃逸"></a>过滤后字符变少的反序列化字符逃逸</h4><p>例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">   <span class="function"><span class="keyword">function</span> <span class="title">filter</span>(<span class="params">$str</span>)</span>&#123;</span><br><span class="line">      $filter=<span class="string">&#x27;/b/i&#x27;</span>;</span><br><span class="line">      <span class="keyword">return</span> preg_replace($filter,<span class="string">&#x27;&#x27;</span>,$str);</span><br><span class="line">   &#125;</span><br><span class="line">   $_SESSION[<span class="string">&#x27;id&#x27;</span>]=<span class="string">&#x27;00b&#x27;</span>;</span><br><span class="line">   $_SESSION[<span class="string">&#x27;user&#x27;</span>]=<span class="string">&#x27;Ali&#x27;</span>;</span><br><span class="line">   var_dump(serialize($_SESSION));</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span><br><span class="line">   var_dump(filter(serialize($_SESSION)));</span><br><span class="line"><span class="comment">// 输出：  </span></span><br><span class="line"><span class="comment">//    string(46) &quot;a:2:&#123;s:2:&quot;id&quot;;s:3:&quot;00b&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span></span><br><span class="line"><span class="comment">//    string(45) &quot;a:2:&#123;s:2:&quot;id&quot;;s:3:&quot;00&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到我们的字符序列化之后经过过滤值“00b”变为”00”。</p>
+<p>若此时我们想要让user的值变为<code>flag</code>。</p>
+<p>我们可以尝试让id的值先为：<code>&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;</code></p>
+<p>序列化输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">过滤前：</span><br><span class="line">string(69) &quot;a:2:&#123;s:2:&quot;id&quot;;s:25:&quot;&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br><span class="line">过滤后：</span><br><span class="line">string(69) &quot;a:2:&#123;s:2:&quot;id&quot;;s:25:&quot;&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到id字段值不变，若此时id字段名可控，将id名变为<code>b</code>，输出一下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">过滤前：</span><br><span class="line">string(68) &quot;a:2:&#123;s:1:&quot;b&quot;;s:25:&quot;&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br><span class="line">过滤后：</span><br><span class="line">string(67) &quot;a:2:&#123;s:1:&quot;&quot;;s:25:&quot;&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到<code>b</code>字段名变成了<code>&quot;</code>向后吞了一位，在吞8位就到我们构造的值那里了，将字段名变为8个b试试：<code>bbbbbbbb</code>，输出看看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">过滤前：</span><br><span class="line">string(75) &quot;a:2:&#123;s:8:&quot;bbbbbbbb&quot;;s:25:&quot;&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br><span class="line">过滤后：</span><br><span class="line">string(67) &quot;a:2:&#123;s:8:&quot;&quot;;s:25:&quot;&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>我们的字段名经过过滤后变为：<code>&quot;;s:25:&quot;</code>了，所以我们只需要在我们构造的值前面继续构造就可以了。将字段名原先构造的值变为：<code>&quot;;s:1:&quot;a&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;</code>，输出一下看看：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">过滤前：</span><br><span class="line">string(83) &quot;a:2:&#123;s:8:&quot;bbbbbbbb&quot;;s:33:&quot;&quot;;s:1:&quot;a&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br><span class="line">过滤后：</span><br><span class="line">string(75) &quot;a:2:&#123;s:8:&quot;&quot;;s:33:&quot;&quot;;s:1:&quot;a&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&quot;</span><br></pre></td></tr></table></figure>
+
+<p>反序列化输出一下最终构造好的值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">   var_dump(unserialize(&#39;a:2:&#123;s:8:&quot;&quot;;s:33:&quot;&quot;;s:1:&quot;a&quot;;s:4:&quot;user&quot;;s:4:&quot;flag&quot;;&#125;&quot;;s:4:&quot;user&quot;;s:3:&quot;Ali&quot;;&#125;&#39;));</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array(2) &#123; [&quot;&quot;;s:33:&quot;&quot;]&#x3D;&gt; string(1) &quot;a&quot; [&quot;user&quot;]&#x3D;&gt; string(4) &quot;flag&quot; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>成功修改user的值。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/" title="php反序列化字符逃逸" target="_blank" rel="external">http://example.com/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/cofess" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/cofess" target="_blank"><span class="text-dark">Nene</span><small class="ml-1x">A Nene</small></a></h3>
+        <div>Nenen&#39;s</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/12/11/php%E4%B8%AD%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0%E6%80%BB%E7%BB%93/" title="php中的危险函数总结"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>$</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>Maybe you could buy me a cup of coffee.</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open alipay app scan this qrcode, buy me a coffee!</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="Scan Qrcode" title="Scan" />
+              </div>
+              <p class="text-muted mv">Scan this qrcode</p>
+              <p class="text-grey">Open wechat app scan this qrcode, buy me a coffee!</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> alipay</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> wechat payment</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/cofess" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="http://weibo.com/cofess" target="_blank" title="Weibo" data-toggle=tooltip data-placement=top><i class="icon icon-weibo"></i></a></li>
+        
+        <li><a href="https://twitter.com/iwebued" target="_blank" title="Twitter" data-toggle=tooltip data-placement=top><i class="icon icon-twitter"></i></a></li>
+        
+        <li><a href="https://www.behance.net/cofess" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
