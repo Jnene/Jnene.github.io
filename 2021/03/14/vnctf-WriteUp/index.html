@@ -5,8 +5,6 @@
   <!-- SEO相关 -->
   
     
-      <meta name="robots" content="noindex,follow">
-    
   
   <!-- 渲染优化 -->
   <meta http-equiv='x-dns-prefetch-control' content='on' />
@@ -24,7 +22,9 @@
 
   <!-- 页面元数据 -->
   
-  <title>Tag: php反序列化 - NeNe&#39;s Blog</title>
+  <title>vnctf-WriteUp - NeNe&#39;s Blog</title>
+  
+    <meta name="keywords" content="ctf">
   
 
   
@@ -355,7 +355,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       <div id="l_cover">
   
     
-        <div id="full" class='cover-wrapper  dock' style="display: none;">
+        <div id="full" class='cover-wrapper post dock' style="display: none;">
           
             <div class='cover-bg lazyload placeholder' data-bg="https://uploadbeta.com/api/pictures/random/?key=BingEverydayWallpaperPicture"></div>
           
@@ -430,77 +430,238 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
         <div class="body-wrapper" id="pjax-container">
           
 
-
 <div class='l_main'>
+  <article class="article post white-box reveal md shadow article-type-post" id="post" itemscope itemprop="blogPost">
   
+
+
+  
+  <div class="article-meta" id="top">
     
-      
-  <section class="post-list">
     
-      
+    
+      <h1 class="title">
+        vnctf-WriteUp
+      </h1>
+      <div class='new-meta-box'>
         
           
-        
-      
-    
-    
-      
-        
-          <div class='post-wrapper'>
-            <div class="post post-v3 white-box reveal shadow">
-  
-  
-  
-  
-    
-    <h2 class="article-title" >
-      <a href="/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/">
-        php反序列化字符逃逸
-      </a>
-    </h2>
-  
-  <div class='md'>
-    
-      
-        PHP序列化与反序列化PHP序列化：serialize序列化是将变量或对象转换成字符串的过程。
-例：
-12345&lt;?php   $_SESSION[&#x27;id&#x27;]=&#x27;001&#x27;;   $_SESSION[&#x27;user&#x27;]=&#x27;Ali&#x27;;   var_dump(serialize($_SESSION));?&gt;
+            
+<div class='new-meta-item author'>
+  <a class='author' href="/" rel="nofollow">
+    <img no-lazy src="">
+    <p>请设置文章作者</p>
+  </a>
+</div>
 
-...
-      
-    
-  </div>
-  
-    <div class='meta-v3' line_style='solid'>
-      <div>
+          
         
-        <time>2020-12-11</time>
+          
+            
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
+    <p>发布于：Mar 14, 2021</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  <div class="new-meta-item browse leancloud">
+    <a class='notlink'>
+      
+      <div id="lc-pv" data-title="vnctf-WriteUp" data-path="/2021/03/14/vnctf-WriteUp/">
+        <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
+        <span id='number'><i class="fas fa-circle-notch fa-spin fa-fw" aria-hidden="true"></i></span>
+        次浏览
+      </div>
+    </a>
+  </div>
+
+
+          
         
       </div>
+    
+  </div>
+
+
+  
+  
+  <h1 id="vnctf-WriteUp"><a href="#vnctf-WriteUp" class="headerlink" title="vnctf-WriteUp"></a>vnctf-WriteUp</h1><p>[toc]</p>
+<h2 id="VNCTF-2021-Ez-game"><a href="#VNCTF-2021-Ez-game" class="headerlink" title="[VNCTF 2021]Ez_game"></a>[VNCTF 2021]Ez_game</h2><h3 id="考点"><a href="#考点" class="headerlink" title="考点"></a>考点</h3><ul>
+<li>js代码审计</li>
+</ul>
+<h3 id="解题"><a href="#解题" class="headerlink" title="解题"></a>解题</h3><p>一共有3个js文件：game.js、gameEngine.js、gameEngineDebug.js。game.js应该是程序核心，另外两个文件没看懂干啥。。。</p>
+<p>审计game.js时，找到了Player类，里面有个Update方法，方法的功能之一就是定义玩家血量，直接修改这个血量进入第十关爆K通关。</p>
+<p><img src="1.1.png" class="lazyload" data-srcset="1.1.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<h3 id="flag"><a href="#flag" class="headerlink" title="flag"></a>flag</h3><p>flag{this_game_is_funny!}</p>
+<h2 id="VNCTF-2021-naive"><a href="#VNCTF-2021-naive" class="headerlink" title="[VNCTF 2021]naive"></a>[VNCTF 2021]naive</h2><h3 id="考点-1"><a href="#考点-1" class="headerlink" title="考点"></a>考点</h3><h3 id="解题-1"><a href="#解题-1" class="headerlink" title="解题"></a>解题</h3><h3 id="flag-1"><a href="#flag-1" class="headerlink" title="flag"></a>flag</h3><h2 id="VNCTF-2021-Easy-laravel"><a href="#VNCTF-2021-Easy-laravel" class="headerlink" title="[VNCTF 2021]Easy_laravel"></a>[VNCTF 2021]Easy_laravel</h2><h3 id="考点-2"><a href="#考点-2" class="headerlink" title="考点"></a>考点</h3><h3 id="解题-2"><a href="#解题-2" class="headerlink" title="解题"></a>解题</h3><h3 id="flag-2"><a href="#flag-2" class="headerlink" title="flag"></a>flag</h3><h2 id="VNCTF-2021-realezjvav"><a href="#VNCTF-2021-realezjvav" class="headerlink" title="[VNCTF 2021]realezjvav"></a>[VNCTF 2021]realezjvav</h2><h3 id="考点-3"><a href="#考点-3" class="headerlink" title="考点"></a>考点</h3><h3 id="解题-3"><a href="#解题-3" class="headerlink" title="解题"></a>解题</h3><h3 id="flag-3"><a href="#flag-3" class="headerlink" title="flag"></a>flag</h3>
+  
+  
+    
+    <div class='footer'>
       
-        <div>
-          <a class='readmore' href='/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/'>
-            Read More
-          </a>
+      
+      
+        <div class='copyright'>
+          <blockquote>
+            
+              
+                <p>博客内容遵循 署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</p>
+
+              
+            
+              
+                <p>本文永久链接是：<a href=http://example.com/2021/03/14/vnctf-WriteUp/>http://example.com/2021/03/14/vnctf-WriteUp/</a></p>
+              
+            
+          </blockquote>
         </div>
+      
       
     </div>
   
+  
+    
 
+
+  <div class='article-meta' id="bottom">
+    <div class='new-meta-box'>
+      
+        
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-03-14T13:27:01+08:00">
+  <a class='notlink'>
+    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
+    <p>更新于：Mar 14, 2021</p>
+  </a>
 </div>
 
-          </div>
         
       
-    
-  </section>
+        
+          
   
-    
-  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/ctf/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>ctf</p></a></div>
 
 
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
     
+      
+        <a class="-mob-share-qq" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://example.com/2021/03/14/vnctf-WriteUp/&title=vnctf-WriteUp - NeNe's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qq.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qq.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://example.com/2021/03/14/vnctf-WriteUp/&title=vnctf-WriteUp - NeNe's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qzone.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qzone.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="http://service.weibo.com/share/share.php?url=http://example.com/2021/03/14/vnctf-WriteUp/&title=vnctf-WriteUp - NeNe's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/weibo.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/weibo.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </div>
+
+
   
+  
+
+  
+    <div class="prev-next">
+      
+        <a class='prev' href='/2021/03/15/%E5%AD%A6Java%E4%B9%8B%E6%95%B0%E7%BB%84/'>
+          <p class='title'><i class="fas fa-chevron-left" aria-hidden="true"></i>学Java之数组</p>
+          <p class='content'>学Java之数组[toc]
+数组
+数组用来存储一组相同数据类型的数据
+数组必须初始化(声明且为数组开辟空间)后使用
+数组的下标从零开始
+数组的长度定义后不可变
+
+声明声明数组有两种形式
+
+int...</p>
+        </a>
+      
+      
+        <a class='next' href='/2021/03/13/%E5%AD%A6Java%E4%B9%8B%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/'>
+          <p class='title'>学Java之流程控制语句<i class="fas fa-chevron-right" aria-hidden="true"></i></p>
+          <p class='content'>学Java之流程控制语句[toc]
+语句注意
+语句以;结尾
+一条语句可以写在多行(可读性差)
+可以通过定义语句块来将多个语句看作一条语句，但语句块声明的变量为局部变量，只能在该语句中使用
+
+12...</p>
+        </a>
+      
+    </div>
+  
+</article>
+
+
+  
+
+  <article class="post white-box reveal shadow" id="comments">
+    <p ct><i class='fas fa-comments'></i> 评论</p>
+    
+    <div id="valine_container" class="valine_thread">
+  <i class="fas fa-cog fa-spin fa-fw fa-2x"></i>
+</div>
+
+  </article>
+
+
+
+
+
+
 </div>
 <aside class='l_side'>
   
@@ -508,103 +669,28 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
     
     
 
-<section class="widget blogger shadow desktop mobile">
-  <div class='content'>
-    
-      
-        <a class='avatar flat-box rectangle' href='/about/'>
-          <img no-lazy src='https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/blog/Logo-NavBar@3x.png'/>
-        </a>
-      
-    
-    
-      <div class='text'>
-        
-        
-        
-          <p><span id="jinrishici-sentence">NeNe's Blog</span></p>
-          <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
-        
-      </div>
-    
-    
-      <div class="social-wrapper">
-        
-          
-            <a href="/atom.xml"
-              class="social fas fa-rss flat-btn"
-              target="_blank"
-              rel="external nofollow noopener noreferrer">
-              
-            </a>
-          
-        
-          
-            <a href="mailto:me@xxx.com"
-              class="social fas fa-envelope flat-btn"
-              target="_blank"
-              rel="external nofollow noopener noreferrer">
-              
-            </a>
-          
-        
-          
-            <a href="https://github.com/volantis-x/"
-              class="social fab fa-github flat-btn"
-              target="_blank"
-              rel="external nofollow noopener noreferrer">
-              
-            </a>
-          
-        
-          
-            <a href="/"
-              class="social fas fa-headphones-alt flat-btn"
-              target="_blank"
-              rel="external nofollow noopener noreferrer">
-              
-            </a>
-          
-        
-      </div>
-    
-  </div>
-</section>
 
-  
 
-  
-    
-    
-
-  
-
-  
-    
-    
-  
-
-  <section class="widget tagcloud shadow desktop mobile">
+  <section class="widget toc-wrapper shadow desktop mobile" id="toc-div" >
     
   <header>
     
-      <a href='/blog/tags/'><i class="fas fa-tags fa-fw" aria-hidden="true"></i><span class='name'>热门标签</span></a>
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
     
   </header>
 
 
     <div class='content'>
-      <a href="/tags/ctf/" style="font-size: 19px; color: #777">ctf</a> <a href="/tags/java/" style="font-size: 24px; color: #555">java</a> <a href="/tags/kali/" style="font-size: 14px; color: #999">kali</a> <a href="/tags/linux/" style="font-size: 14px; color: #999">linux</a> <a href="/tags/linux%E5%91%BD%E4%BB%A4/" style="font-size: 14px; color: #999">linux命令</a> <a href="/tags/php/" style="font-size: 21.5px; color: #666">php</a> <a href="/tags/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" style="font-size: 14px; color: #999">php反序列化</a> <a href="/tags/sql%E6%B3%A8%E5%85%A5/" style="font-size: 14px; color: #999">sql注入</a> <a href="/tags/xss/" style="font-size: 14px; color: #999">xss</a> <a href="/tags/%E5%86%B7%E7%9F%A5%E8%AF%86/" style="font-size: 14px; color: #999">冷知识</a> <a href="/tags/%E5%B7%A5%E5%85%B7/" style="font-size: 16.5px; color: #888">工具</a> <a href="/tags/%E6%96%87%E7%AB%A0%E6%94%B6%E8%97%8F/" style="font-size: 14px; color: #999">文章收藏</a>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#VNCTF-2021-Ez-game"><span class="toc-text">[VNCTF 2021]Ez_game</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%80%83%E7%82%B9"><span class="toc-text">考点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98"><span class="toc-text">解题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flag"><span class="toc-text">flag</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VNCTF-2021-naive"><span class="toc-text">[VNCTF 2021]naive</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%80%83%E7%82%B9-1"><span class="toc-text">考点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-1"><span class="toc-text">解题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flag-1"><span class="toc-text">flag</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VNCTF-2021-Easy-laravel"><span class="toc-text">[VNCTF 2021]Easy_laravel</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%80%83%E7%82%B9-2"><span class="toc-text">考点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-2"><span class="toc-text">解题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flag-2"><span class="toc-text">flag</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VNCTF-2021-realezjvav"><span class="toc-text">[VNCTF 2021]realezjvav</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%80%83%E7%82%B9-3"><span class="toc-text">考点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E9%A2%98-3"><span class="toc-text">解题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flag-3"><span class="toc-text">flag</span></a></li></ol></li></ol>
     </div>
   </section>
 
 
   
 
-  
-
 
 </aside>
+
 
 
 		  
@@ -613,8 +699,8 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
 
 <script>
   window.pdata={}
-  pdata.ispage=false;
-  pdata.postTitle="";
+  pdata.ispage=true;
+  pdata.postTitle="vnctf-WriteUp";
   pdata.commentPath="";
   pdata.commentPlaceholder="";
   // header 这里无论是否开启pjax都需要
