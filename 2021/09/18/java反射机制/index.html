@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head hexo-theme='https://github.com/volantis-x/hexo-theme-volantis/tree/4.3.1'>
+  <meta charset="utf-8">
+  <!-- SEO相关 -->
+  
+    
+  
+  <!-- 渲染优化 -->
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  <link rel='dns-prefetch' href='https://cdn.jsdelivr.net'>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <link rel="preload" href="/css/first.css" as="style">
+  
+
+  <!-- 页面元数据 -->
+  
+  <title>java反射机制 - NeNe&#39;s Blog</title>
+  
+    <meta name="keywords" content="java">
+  
+
+  
+
+  <!-- feed -->
+  
+
+  <!-- import meta -->
+  
+
+  <!-- link -->
+  
+
+  <!-- import link -->
+  
+
+  
+    
+<link rel="stylesheet" href="/css/first.css">
+
+  
+
+  
+  <link rel="stylesheet" href="/css/style.css" media="print" onload="this.media='all';this.onload=null">
+  <noscript><link rel="stylesheet" href="/css/style.css"></noscript>
+  
+
+  <script id="loadcss"></script>
+
+  
+<script>
+if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMode))
+    document.write(
+	'<style>'+
+		'html{'+
+			'overflow-x: hidden !important;'+
+			'overflow-y: hidden !important;'+
+		'}'+
+		'.kill-ie{'+
+			'text-align:center;'+
+			'height: 100%;'+
+			'margin-top: 15%;'+
+			'margin-bottom: 5500%;'+
+		'}'+
+	'</style>'+
+    '<div class="kill-ie">'+
+        '<h1><b>抱歉，您的浏览器无法访问本站</b></h1>'+
+        '<h3>微软已经于2016年终止了对 Internet Explorer (IE) 10 及更早版本的支持，<br/>'+
+        '继续使用存在极大的安全隐患，请使用当代主流的浏览器进行访问。</h3><br/>'+
+        '<a target="_blank" rel="noopener" href="https://www.microsoft.com/zh-cn/WindowsForBusiness/End-of-IE-support"><strong>了解详情 ></strong></a>'+
+    '</div>');
+</script>
+
+
+<noscript>
+	<style>
+		html{
+			overflow-x: hidden !important;
+			overflow-y: hidden !important;
+		}
+		.kill-noscript{
+			text-align:center;
+			height: 100%;
+			margin-top: 15%;
+			margin-bottom: 5500%;
+		}
+	</style>
+    <div class="kill-noscript">
+        <h1><b>抱歉，您的浏览器无法访问本站</b></h1>
+        <h3>本页面需要浏览器支持（启用）JavaScript</h3><br/>
+        <a target="_blank" rel="noopener" href="https://www.baidu.com/s?wd=启用JavaScript"><strong>了解详情 ></strong></a>
+    </div>
+</noscript>
+
+</head>
+
+  <body>
+    
+
+<header id="l_header" class="l_header auto shadow blur show" style='opacity: 0' >
+  <div class='container'>
+  <div id='wrapper'>
+    <div class='nav-sub'>
+      <p class="title"></p>
+      <ul class='switcher nav-list-h m-phone' id="pjax-header-nav-list">
+        <li><a id="s-comment" class="fas fa-comments fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+          <li><a id="s-toc" class="s-toc fas fa-list fa-fw" target="_self" href='javascript:void(0)'></a></li>
+        
+      </ul>
+    </div>
+		<div class="nav-main">
+      
+        
+        <a class="title flat-box" target="_self" href='/'>
+          
+            <img no-lazy class='logo' src='https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/blog/Logo-NavBar@3x.png'/>
+          
+          
+          
+        </a>
+      
+
+			<div class='menu navigation'>
+				<ul class='nav-list-h m-pc'>
+          
+          
+          
+            
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-rss fa-fw'></i>博客
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-folder-open fa-fw'></i>分类
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-tags fa-fw'></i>标签
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-archive fa-fw'></i>归档
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-link fa-fw'></i>友链
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-info-circle fa-fw'></i>关于
+                </a>
+                
+              </li>
+            
+          
+          
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="Search..." />
+        </form>
+      </div>
+
+			<ul class='switcher nav-list-h m-phone'>
+				
+					<li><a class="s-search fas fa-search fa-fw" target="_self" href='javascript:void(0)'></a></li>
+				
+				<li>
+          <a class="s-menu fas fa-bars fa-fw" target="_self" href='javascript:void(0)'></a>
+          <ul class="menu-phone list-v navigation white-box">
+            
+              
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-rss fa-fw'></i>博客
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-folder-open fa-fw'></i>分类
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-tags fa-fw'></i>标签
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-archive fa-fw'></i>归档
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-link fa-fw'></i>友链
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="menuitem flat-box faa-parent animated-hover" href=/
+                  
+                  
+                  
+                    id="home"
+                  >
+                  <i class='fas fa-info-circle fa-fw'></i>关于
+                </a>
+                
+              </li>
+            
+          
+            
+          </ul>
+        </li>
+			</ul>
+		</div>
+	</div>
+  </div>
+</header>
+
+    <div id="l_body">
+      <div id="l_cover">
+  
+    
+        <div id="full" class='cover-wrapper post dock' style="display: none;">
+          
+            <div class='cover-bg lazyload placeholder' data-bg="https://uploadbeta.com/api/pictures/random/?key=BingEverydayWallpaperPicture"></div>
+          
+          <div class='cover-body'>
+  <div class='top'>
+    
+    
+      <p class="title">Volantis</p>
+    
+    
+  </div>
+  <div class='bottom'>
+    <div class='menu navigation'>
+      <div class='list-h'>
+        
+          
+            <a href="/v4/getting-started/"
+              
+              
+              id="v4getting-started">
+              <img src='https://cdn.jsdelivr.net/gh/twitter/twemoji@13.0/assets/svg/1f5c3.svg'><p>文档</p>
+            </a>
+          
+            <a href="/faqs/"
+              
+              
+              id="faqs">
+              <img src='https://cdn.jsdelivr.net/gh/twitter/twemoji@13.0/assets/svg/1f516.svg'><p>帮助</p>
+            </a>
+          
+            <a href="/examples/"
+              
+              
+              id="examples">
+              <img src='https://cdn.jsdelivr.net/gh/twitter/twemoji@13.0/assets/svg/1f396.svg'><p>示例</p>
+            </a>
+          
+            <a href="/contributors/"
+              
+              
+              id="contributors">
+              <img src='https://cdn.jsdelivr.net/gh/twitter/twemoji@13.0/assets/svg/1f389.svg'><p>社区</p>
+            </a>
+          
+            <a href="/archives/"
+              
+              
+              id="archives">
+              <img src='https://cdn.jsdelivr.net/gh/twitter/twemoji@13.0/assets/svg/1f4f0.svg'><p>博客</p>
+            </a>
+          
+            <a target="_blank" rel="noopener" href="https://github.com/volantis-x/hexo-theme-volantis/"
+              
+              
+              id="https:githubcomvolantis-xhexo-theme-volantis">
+              <img src='https://cdn.jsdelivr.net/gh/twitter/twemoji@13.0/assets/svg/1f9ec.svg'><p>源码</p>
+            </a>
+          
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+          <div id="scroll-down" style="display: none;"><i class="fa fa-chevron-down scroll-down-effects"></i></div>
+        </div>
+    
+  
+  </div>
+
+      <div id="safearea">
+        <div class="body-wrapper" id="pjax-container">
+          
+
+<div class='l_main'>
+  <article class="article post white-box reveal md shadow article-type-post" id="post" itemscope itemprop="blogPost">
+  
+
+
+  
+  <div class="article-meta" id="top">
+    
+    
+    
+      <h1 class="title">
+        java反射机制
+      </h1>
+      <div class='new-meta-box'>
+        
+          
+            
+<div class='new-meta-item author'>
+  <a class='author' href="/" rel="nofollow">
+    <img no-lazy src="">
+    <p>请设置文章作者</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+
+          
+        
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
+    <p>发布于：Sep 18, 2021</p>
+  </a>
+</div>
+
+          
+        
+          
+            
+  <div class="new-meta-item browse leancloud">
+    <a class='notlink'>
+      
+      <div id="lc-pv" data-title="java反射机制" data-path="/2021/09/18/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/">
+        <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
+        <span id='number'><i class="fas fa-circle-notch fa-spin fa-fw" aria-hidden="true"></i></span>
+        次浏览
+      </div>
+    </a>
+  </div>
+
+
+          
+        
+      </div>
+    
+  </div>
+
+
+  
+  
+  <h1 id="Java反射机制"><a href="#Java反射机制" class="headerlink" title="Java反射机制"></a>Java反射机制</h1><p>[toc]</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>通过反射机制可以操作class文件。 </p>
+<p>反射机制的主要类包：java.lang.reflect.*</p>
+<p>主要类</p>
+<p>java.lang.Class：代表字节码文件</p>
+<p>java.lang.reflect.Methon：代表字节码文件中的方法</p>
+<p>java.lang.reflect.Filed：代表字节码文件中的属性（成员属性和类属性）</p>
+<p>java.lang.reflect.Constructor：代表字节码文件中的方法（成员方法和类方法）</p>
+<h2 id="获取Class类的三种方式"><a href="#获取Class类的三种方式" class="headerlink" title="获取Class类的三种方式"></a>获取Class类的三种方式</h2><ol>
+<li><em>Class.forName(String className)</em></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Class cls1 = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	cls1 = Class.forName(<span class="string">&quot;java.lang.String&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">	e.printStackTrace();</span><br><span class="line">&#125;</span><br><span class="line">System.out.println(cls1); <span class="comment">// class java.lang.String</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ol>
+<li>forName()是Class类的一个静态方法</li>
+<li>参数为一个完整的类名(java.lang不能省略)</li>
+</ol>
+</blockquote>
+<ol start="2">
+<li>class属性</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Class cls3 = <span class="keyword">int</span>.class;</span><br><span class="line">Class cls4 = String.class;</span><br><span class="line">System.out.println(cls3);<span class="comment">// int</span></span><br><span class="line">System.out.println(cls4);<span class="comment">// class java.lang.String</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Java中的任何一种类型(基本数据类型和引用数据类型)都有class属性。</p>
+</blockquote>
+<ol start="3">
+<li><em>getClass()</em></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class cls2 = String.class;</span><br><span class="line">System.out.println(cls2);<span class="comment">// class java.lang.String</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Object 类中有一个getClass()方法，用于获得类的字节码文件。因此，所有类都可以通过这个方法获得类对应的字节码文件</p>
+</blockquote>
+<h3 id="Class-forName-类加载执行静态代码块"><a href="#Class-forName-类加载执行静态代码块" class="headerlink" title="Class.forName()类加载执行静态代码块"></a>Class.forName()类加载执行静态代码块</h3><p>在调用forName()方法时，会导致类加载。而静态代码块会在类加载时执行且只执行一次</p>
+<p>示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*public class Person &#123;</span></span><br><span class="line"><span class="comment">    static &#123;</span></span><br><span class="line"><span class="comment">        System.out.println(&quot;静态代码块执行&quot;);</span></span><br><span class="line"><span class="comment">    &#125;</span></span><br><span class="line"><span class="comment">&#125;/*</span></span><br><span class="line"><span class="comment">Class.forName(&quot;Reflection.Examp3.Person&quot;);</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	输出：</span></span><br><span class="line"><span class="comment">		静态代码块执行</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="通过Class类实例化对象"><a href="#通过Class类实例化对象" class="headerlink" title="通过Class类实例化对象"></a>通过Class类实例化对象</h2><ol>
+<li>newInstance()</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	Class cls = Class.forName(<span class="string">&quot;Reflection.Examp2.User&quot;</span>);</span><br><span class="line">	Object user = cls.newInstance();</span><br><span class="line">	System.out.println(user);</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    	输出：</span></span><br><span class="line"><span class="comment">    		User类的无参构造方法</span></span><br><span class="line"><span class="comment">			Reflection.Examp2.User@1b6d3586</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (ClassNotFoundException | InstantiationException | IllegalAccessException e) &#123;</span><br><span class="line">	e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ol>
+<li>newInstance()方法在jdk9之后就已经过时</li>
+<li>呢哇Instance()方法会调用对应类的构造方法</li>
+</ol>
+</blockquote>
+<h2 id="通过读取属性文件实例化对象"><a href="#通过读取属性文件实例化对象" class="headerlink" title="通过读取属性文件实例化对象"></a>通过读取属性文件实例化对象</h2><p>classinfo.properties</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">classname</span>=<span class="string">Reflection.PathCreate.User</span></span><br></pre></td></tr></table></figure>
+
+<p>通过读取属性文件实例化对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&#x2F;&#x2F;读取配置文件</span><br><span class="line">FileReader fr &#x3D; new FileReader(&quot;D:\\file\\javaSE\\练习\\反射\\project\\src\\classinfo.preperties&quot;);</span><br><span class="line">&#x2F;&#x2F;获取文件</span><br><span class="line">Properties ppe &#x3D; new Properties();</span><br><span class="line">ppe.load(fr);</span><br><span class="line">fr.close();&#x2F;&#x2F;关闭流</span><br><span class="line">&#x2F;&#x2F;获取文件内容</span><br><span class="line">String classname &#x3D; ppe.getProperty(&quot;classname&quot;);</span><br><span class="line">&#x2F;&#x2F;获取Class对象</span><br><span class="line">Class cls &#x3D; Class.forName(classname);</span><br><span class="line">&#x2F;&#x2F;实例化User对象</span><br><span class="line">Object user &#x3D; cls.newInstance();</span><br><span class="line">System.out.println(user);</span><br><span class="line">&#x2F;*</span><br><span class="line">	输出：</span><br><span class="line">		User类的无参构造方法</span><br><span class="line">		Reflection.PathCreate.User@1b6d3586</span><br><span class="line">*&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>通过new 关键字实例化对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">User user1 = <span class="keyword">new</span> User();</span><br><span class="line">System.out.println(user1);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	输出：</span></span><br><span class="line"><span class="comment">		User类的无参构造方法</span></span><br><span class="line"><span class="comment">		Reflection.PathCreate.User@4554617c</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>实例化对象可以直接new，也可以通过Class类实例化对象，但是相比传统的实例化方式，后者更加灵活，只需要修改配置文件就可以实例化对象，不需要改动源码。</p>
+<p>用读取配置文件来实例化一个对象时，如果对象的访问权限不是public或者构造方法的访问权限不是public，那么其他包中的类来实例化这个对象会抛出异常</p>
+</blockquote>
+<h3 id="获取类路径-src路径-下的绝对路径"><a href="#获取类路径-src路径-下的绝对路径" class="headerlink" title="获取类路径(src路径)下的绝对路径"></a>获取类路径(src路径)下的绝对路径</h3><p>我们在代码中写的路径名往往不通用，当更换操作系统或者IDE时，在运行程序可能会出现文件找不到等错误。下面介绍一种通用方式来获取文件路径。<em>这种方式只能获取类文件路径下的文件(src路径下的文件)</em></p>
+<p>PathTest.java：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	目录结构：</span></span><br><span class="line"><span class="comment">		src</span></span><br><span class="line"><span class="comment">			classinfo.preperties</span></span><br><span class="line"><span class="comment">			Examp4</span></span><br><span class="line"><span class="comment">				PathTest.java</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//Thread.currentThread()：当前线程</span></span><br><span class="line"><span class="comment">//getContextClassLoader()：获取当前线程类的加载器</span></span><br><span class="line"><span class="comment">//getResource()：【获取资源】类加载器对象的方法，当前线程的类加载器默认从类的根路径下加载资源</span></span><br><span class="line">String path1=Thread.currentThread().getContextClassLoader()</span><br><span class="line">             .getResource(<span class="string">&quot;classinfo.properties&quot;</span>).getPath();</span><br><span class="line">System.out.println(path1);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	输出：		/D:/file/javaSE/%e7%bb%83%e4%b9%a0/%e5%8f%8d%e5%b0%84/project/out/production/project/classinfo.properties</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果路径中有中文，则中文会被URL编码，使用时要解码【java.net.URLDecoder.decode(path1,”utf-8”)】。</p>
+</blockquote>
+<p>上面的方式是先获取配置文件路径，在通过IO流读取，我们通过类加载器的getResourceAsStream()方法就可以获取这个IO流。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取IO流</span></span><br><span class="line">InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(<span class="string">&quot;classinfo.properties&quot;</span>);</span><br><span class="line"><span class="comment">//读取文件内容</span></span><br><span class="line">Properties pps = <span class="keyword">new</span> Properties();</span><br><span class="line">pps.load(is);</span><br><span class="line">is.close();</span><br><span class="line"><span class="comment">//获取class名</span></span><br><span class="line">String clsname = pps.getProperty(<span class="string">&quot;classname&quot;</span>);</span><br><span class="line"><span class="comment">//通过Class对象新建对象</span></span><br><span class="line">Class cls = Class.forName(clsname);</span><br><span class="line">Object obj = cls.newInstance();</span><br><span class="line">System.out.println(obj);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	输出：</span></span><br><span class="line"><span class="comment">		Reflection.PathCreate.User@4554617c</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="类加载器简述"><a href="#类加载器简述" class="headerlink" title="类加载器简述"></a>类加载器简述</h4><p>上面两种获取绝对文件路径的方式都提到了类加载器的概念。这里简单描述</p>
+<p>当程序运行之前，类加载器负责加载用到的类。</p>
+<p>类加载器包括启动类加载器、扩展类加载器、应用类加载器。</p>
+<p>当加载一个类时，系统按照启动类加载器—&gt;扩展类加载器—&gt;应用类加载器的顺序搜索这个类。</p>
+<p>启动类加载器加载的类在【jre\lib\rt.jar】中的jar包</p>
+<p>扩展类加载器加载的类在【jre\lib\ext】文件下中jar包</p>
+<p>应用类加载器加载的类在【classpath】中的jar包</p>
+<h3 id="资源绑定器"><a href="#资源绑定器" class="headerlink" title="资源绑定器"></a>资源绑定器</h3><p>java.util包中提供了资源绑定器，可以直接获取类路径下的properties文件(只能获取properties文件)。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ResourceBundle rb = ResourceBundle.getBundle(<span class="string">&quot;classinfo&quot;</span>);</span><br><span class="line">String classname = rb.getString(<span class="string">&quot;classname&quot;</span>);</span><br><span class="line">Class cls = Class.forName(classname);</span><br><span class="line">Object obj = cls.newInstance();</span><br><span class="line">System.out.println(obj);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注：</p>
+<ol>
+<li>配置文件必须在类目录下</li>
+<li>文件名不需要加后缀</li>
+<li>默认是读取src目录下</li>
+<li>javaEE项目应默认读取WEB-INF下的classes下的配置文件</li>
+</ol>
+</blockquote>
+<h3 id="类的根路径"><a href="#类的根路径" class="headerlink" title="类的根路径"></a>类的根路径</h3><p>java中真正的类路径中存放的都是编译好的class字节码文件和其他文件，不包括java源文件。IDEA中的src就对应着这个路径。</p>
+<h2 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h2><h3 id="java-lang-Class"><a href="#java-lang-Class" class="headerlink" title="java.lang.Class"></a>java.lang.Class</h3><blockquote>
+<p>属性相关：</p>
+<p>public Field getField(String name) throws NoSuchFieldException, SecurityException：获取类的指定属性对象(被public修饰)</p>
+<p>public Field[] getFields() throws SecurityException：获取类的所有属性对象数组(被public修饰)</p>
+<p>public Field getDeclaredField(String name) throws NoSuchFieldException, SecurityException：获取类的指定属性对象</p>
+<p>public Field[] getDeclaredFields() throws SecurityException：获取类的所有属性对象数组</p>
+<p>构造方法：</p>
+<p>public Constructor<T> getConstructor(Class&lt;?&gt;… parameterTypes)<br>        throws NoSuchMethodException, SecurityException：获取指定构造方法(被public修饰)</p>
+<p>public Constructor&lt;?&gt;[] getConstructors() throws SecurityException：获取所有构造方法(被public修饰)</p>
+<p>public Constructor<T> getDeclaredConstructor(Class&lt;?&gt;… parameterTypes)<br>        throws NoSuchMethodException, SecurityException：获取指定构造方法</p>
+<p>public Constructor&lt;?&gt;[] getDeclaredConstructors() throws SecurityException：获取所有构造方法</p>
+<p>方法相关：</p>
+<p>public Method getMethod(String name, Class&lt;?&gt;… parameterTypes)<br>     throws NoSuchMethodException, SecurityException：返回类的指定方法(被public方法修饰)</p>
+<p>public Method[] getMethods() throws SecurityException：返回类的所有方法(被public方法修饰)</p>
+<p>public Method getDeclaredMethod(String name, Class&lt;?&gt;… parameterTypes) </p>
+<p>​        throws NoSuchMethodException, SecurityException：返回类的指定方法</p>
+<p>public Method[] getDeclaredMethods() throws SecurityException：返回类的所有方法集合</p>
+<p>其他：</p>
+<p>public String getName()：获取类的完整名称(包名+类名)</p>
+<p>public String getSimpleName()：获取类的名称(只有类名)</p>
+<p>public native Class&lt;? super T&gt; getSuperclass()：获取父类的Class对象</p>
+<p>public Class&lt;?&gt;[] getInterfaces()：获取所有实现的接口</p>
+</blockquote>
+<h3 id="java-lang-reflect-Field"><a href="#java-lang-reflect-Field" class="headerlink" title="java.lang.reflect.Field"></a>java.lang.reflect.Field</h3><blockquote>
+<p>public String getName()：返回属性名</p>
+<p>public int getModifiers()：返回修饰符代码。 应该使用<code>Modifier</code>类来解码修饰符【public static String toString(int mod)：返回修饰符代码所表示的修饰符】。</p>
+<p>public Class&lt;?&gt; getType()：返回属性类型</p>
+<p>public void set(Object obj, Object value)：设置obj的属性值为value</p>
+<p>public Object get(Object obj)：返回obj的属性值</p>
+</blockquote>
+<h3 id="java-lang-reflect-Method"><a href="#java-lang-reflect-Method" class="headerlink" title="java.lang.reflect.Method"></a>java.lang.reflect.Method</h3><blockquote>
+<p>public int getModifiers()：返回修饰符代码。应该使用<code>Modifier</code>类来解码修饰符【public static String toString(int mod)：返回修饰符代码所表示的修饰符】。</p>
+<p>public Class&lt;?&gt; getReturnType()：返回一个Class对象，表示返回值类型</p>
+<p>public String getName()：返回方法名</p>
+<p>public Class&lt;?&gt;[] getParameterTypes()：返回参数对象列表</p>
+<p>public Object invoke(Object obj, Object… args)<br>        throws IllegalAccessException, IllegalArgumentException, InvocationTargetException：调用对象的方法，args是可变参数列表，用来区分重载的方法</p>
+</blockquote>
+<h3 id="java-lang-reflect-Construct"><a href="#java-lang-reflect-Construct" class="headerlink" title="java.lang.reflect.Construct"></a>java.lang.reflect.Construct</h3><blockquote>
+<p>public int getModifiers()：获取修饰符代码。应该使用<code>Modifier</code>类来解码修饰符【public static String toString(int mod)：返回修饰符代码所表示的修饰符】。</p>
+<p>public Class&lt;?&gt;[] getParameterTypes()：获取所有的参数对象列表</p>
+<p>public T newInstance(Object … initargs)<br>        throws InstantiationException, IllegalAccessException,<br>               IllegalArgumentException, InvocationTargetException：新建对象</p>
+</blockquote>
+<h3 id="类的反编译"><a href="#类的反编译" class="headerlink" title="类的反编译"></a>类的反编译</h3><p>通过上述方法，获取一个类所有的属性，构造方法和方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">Class cls = Class.forName(<span class="string">&quot;Reflection.ClassCollections.Student&quot;</span>);</span><br><span class="line">StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">sb.append(Modifier.toString(cls.getModifiers())+<span class="string">&quot; class &quot;</span>+cls.getSimpleName()+<span class="string">&quot; &#123;&quot;</span>+<span class="string">&quot;\n&quot;</span>);</span><br><span class="line"><span class="comment">//获取属性</span></span><br><span class="line">Field[] fields = cls.getDeclaredFields();</span><br><span class="line"><span class="keyword">for</span>(Field field:fields)&#123;</span><br><span class="line">	sb.append(<span class="string">&quot;\t&quot;</span>);</span><br><span class="line">    sb.append(Modifier.toString(field.getModifiers()));</span><br><span class="line">    sb.append(<span class="string">&quot; &quot;</span>+field.getType().getSimpleName());</span><br><span class="line">    sb.append(<span class="string">&quot; &quot;</span>+field.getName());</span><br><span class="line">    sb.append(<span class="string">&quot;;&quot;</span>+<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//获取构造方法</span></span><br><span class="line">Constructor[] constructor = cls.getDeclaredConstructors();</span><br><span class="line"><span class="keyword">for</span>(Constructor con:constructor)&#123;</span><br><span class="line">	sb.append(<span class="string">&quot;\t&quot;</span>);</span><br><span class="line">    sb.append(Modifier.toString(con.getModifiers()));</span><br><span class="line">    sb.append(<span class="string">&quot; &quot;</span>);</span><br><span class="line">    sb.append(cls.getSimpleName());</span><br><span class="line">    sb.append(<span class="string">&quot;(&quot;</span>);</span><br><span class="line">    Class[] paraClass = con.getParameterTypes();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt; paraClass.length;i++)&#123;</span><br><span class="line">    	Class curCl = paraClass[i];</span><br><span class="line">        sb.append(curCl.getSimpleName());</span><br><span class="line">        <span class="keyword">if</span>(i != paraClass.length-<span class="number">1</span>)</span><br><span class="line">        	sb.append(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">        sb.append(<span class="string">&quot;)&quot;</span>);</span><br><span class="line">        sb.append(<span class="string">&quot;&#123;&#125;\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取方法</span></span><br><span class="line">Method[] methods = cls.getDeclaredMethods();</span><br><span class="line">cls.getMethods();</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;methods.length;i++)&#123;</span><br><span class="line">	Method cur = methods[i];</span><br><span class="line">    sb.append(<span class="string">&quot;\t&quot;</span>);</span><br><span class="line">    sb.append(Modifier.toString(cur.getModifiers())+<span class="string">&quot; &quot;</span>+cur.getReturnType().getSimpleName()+<span class="string">&quot; &quot;</span>+cur.getName());</span><br><span class="line">    sb.append(<span class="string">&quot;(&quot;</span>);</span><br><span class="line">    Class[] clss = cur.getParameterTypes();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;clss.length;j++)&#123;</span><br><span class="line">    	Class curCls = clss[j];</span><br><span class="line">        <span class="keyword">if</span>(j==clss.length-<span class="number">1</span>)&#123;</span><br><span class="line">            sb.append(curCls.getSimpleName());</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            sb.append(curCls.getSimpleName()+<span class="string">&quot;,&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">	&#125;</span><br><span class="line">	sb.append(<span class="string">&quot;)&quot;</span>);</span><br><span class="line">	sb.append(<span class="string">&quot;&#123;&#125;&quot;</span>);</span><br><span class="line">	sb.append(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">sb.append(<span class="string">&quot;&#125;&quot;</span>);</span><br><span class="line">System.out.println(sb);</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	输出：</span></span><br><span class="line"><span class="comment">	public class Student &#123;</span></span><br><span class="line"><span class="comment">		public String name;</span></span><br><span class="line"><span class="comment">		protected String sex;</span></span><br><span class="line"><span class="comment">		private int id;</span></span><br><span class="line"><span class="comment">		static boolean flag;</span></span><br><span class="line"><span class="comment">		 Student(String,String)&#123;&#125;</span></span><br><span class="line"><span class="comment">		public Student(String,String,int)&#123;&#125;</span></span><br><span class="line"><span class="comment">		public Student()&#123;&#125;</span></span><br><span class="line"><span class="comment">		private String getName()&#123;&#125;</span></span><br><span class="line"><span class="comment">		public void setName(String)&#123;&#125;</span></span><br><span class="line"><span class="comment">		public void printInfo(String)&#123;&#125;</span></span><br><span class="line"><span class="comment">		private void printInfo()&#123;&#125;</span></span><br><span class="line"><span class="comment">	&#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="访问属性-设置获取属性值"><a href="#访问属性-设置获取属性值" class="headerlink" title="访问属性(设置获取属性值)"></a>访问属性(设置获取属性值)</h3><p>获取到一个Field对象之后，我们可以设置、获取对象的这个属性值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;传统方式获取设置对象的属性值</span><br><span class="line">Student stu1 &#x3D; new Student();</span><br><span class="line">stu1.name &#x3D; &quot;张&quot;;</span><br><span class="line">System.out.println(stu1.name); &#x2F;&#x2F; 张</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;利用反射机制</span><br><span class="line">Class stuCls &#x3D; Class.forName(&quot;Reflection.ClassCollections.Student&quot;);</span><br><span class="line">Object stu2 &#x3D; stuCls.newInstance();&#x2F;&#x2F;创建对象</span><br><span class="line">Field name &#x3D; stuCls.getDeclaredField(&quot;name&quot;);</span><br><span class="line">name.set(stu2, &quot;李四&quot;);</span><br><span class="line">System.out.println(name.get(stu2));</span><br><span class="line"></span><br><span class="line">Field sex &#x3D; stuCls.getDeclaredField(&quot;sex&quot;);</span><br><span class="line">sex.setAccessible(true);&#x2F;&#x2F;可以访问非public权限的属性</span><br><span class="line">System.out.println(sex.getName());&#x2F;&#x2F; sex</span><br><span class="line">sex.set(stu2, &quot;男&quot;); &#x2F;&#x2F; 设置 stu2对象的 sex属性值为“男”</span><br><span class="line">System.out.println(sex.get(stu2));&#x2F;&#x2F;获取输出stu2对象的sex属性</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>若一个属性的访问权限不是public，那么我们设置一个对象的属性值时可能出现异常(没有访问权限)，我们可以调用Field的【setAccessible(true)】来访问该属性</p>
+</blockquote>
+<h3 id="通过反射机制新建对象"><a href="#通过反射机制新建对象" class="headerlink" title="通过反射机制新建对象"></a>通过反射机制新建对象</h3><p>若对象没有空构造方法，我们就不能用Class对象的newInstance()方法新建对象。这时我们可以获取Class对象的有参构造方法得到Constructor对象，通过Constructor对象的newInstance()方法来新建对象</p>
+<h3 id="获取父类信息和实现的接口信息"><a href="#获取父类信息和实现的接口信息" class="headerlink" title="获取父类信息和实现的接口信息"></a>获取父类信息和实现的接口信息</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//String 类</span></span><br><span class="line">Class cls = Class.forName(<span class="string">&quot;java.lang.String&quot;</span>);</span><br><span class="line"><span class="comment">//String 父类</span></span><br><span class="line">Class supCls = cls.getSuperclass();</span><br><span class="line">System.out.println(supCls.getSimpleName());</span><br><span class="line"><span class="comment">//String 实现的接口</span></span><br><span class="line">Class[] interfaces = cls.getInterfaces();</span><br><span class="line"><span class="keyword">for</span>(Class inf:interfaces)&#123;</span><br><span class="line">	System.out.println(inf.getSimpleName());</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">	输出：</span></span><br><span class="line"><span class="comment">		Object</span></span><br><span class="line"><span class="comment">		Serializable</span></span><br><span class="line"><span class="comment">		Comparable</span></span><br><span class="line"><span class="comment">		CharSequence</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+
+  
+  
+    
+    <div class='footer'>
+      
+      
+      
+        <div class='copyright'>
+          <blockquote>
+            
+              
+                <p>博客内容遵循 署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</p>
+
+              
+            
+              
+                <p>本文永久链接是：<a href=http://example.com/2021/09/18/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/>http://example.com/2021/09/18/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/</a></p>
+              
+            
+          </blockquote>
+        </div>
+      
+      
+    </div>
+  
+  
+    
+
+
+  <div class='article-meta' id="bottom">
+    <div class='new-meta-box'>
+      
+        
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-10-31T22:54:33+08:00">
+  <a class='notlink'>
+    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
+    <p>更新于：Oct 31, 2021</p>
+  </a>
+</div>
+
+        
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/java/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>java</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://example.com/2021/09/18/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/&title=java反射机制 - NeNe's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qq.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qq.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://example.com/2021/09/18/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/&title=java反射机制 - NeNe's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qzone.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qzone.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="http://service.weibo.com/share/share.php?url=http://example.com/2021/09/18/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/&title=java反射机制 - NeNe's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/weibo.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/weibo.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </div>
+
+
+  
+  
+
+  
+    <div class="prev-next">
+      
+        <a class='prev' href='/2021/09/26/java%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/'>
+          <p class='title'><i class="fas fa-chevron-left" aria-hidden="true"></i>java网络编程</p>
+          <p class='content'>java网络编程[toc]
+计算机网络基本概念概述什么是计算机网络计算机网络就是将在不同地方的多台计算机连接起来，实现资源的传输、共享。
+计算机网络三要素协议若计算机之间想要通讯，就必须遵循相同...</p>
+        </a>
+      
+      
+        <a class='next' href='/2020/12/11/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%97%E7%AC%A6%E9%80%83%E9%80%B8/'>
+          <p class='title'>php反序列化字符逃逸<i class="fas fa-chevron-right" aria-hidden="true"></i></p>
+          <p class='content'>PHP序列化与反序列化PHP序列化：serialize序列化是将变量或对象转换成字符串的过程。
+例：
+12345&lt;?php   $_SESSION[&#x27;id&#x27;]=&#x2...</p>
+        </a>
+      
+    </div>
+  
+</article>
+
+
+  
+
+  <article class="post white-box reveal shadow" id="comments">
+    <p ct><i class='fas fa-comments'></i> 评论</p>
+    
+    <div id="valine_container" class="valine_thread">
+  <i class="fas fa-cog fa-spin fa-fw fa-2x"></i>
+</div>
+
+  </article>
+
+
+
+
+
+
+</div>
+<aside class='l_side'>
+  
+  
+    
+    
+
+
+
+  <section class="widget toc-wrapper shadow desktop mobile" id="toc-div" >
+    
+  <header>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
+    
+  </header>
+
+
+    <div class='content'>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96Class%E7%B1%BB%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="toc-text">获取Class类的三种方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Class-forName-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%89%A7%E8%A1%8C%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E5%9D%97"><span class="toc-text">Class.forName()类加载执行静态代码块</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87Class%E7%B1%BB%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%AF%B9%E8%B1%A1"><span class="toc-text">通过Class类实例化对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E8%AF%BB%E5%8F%96%E5%B1%9E%E6%80%A7%E6%96%87%E4%BB%B6%E5%AE%9E%E4%BE%8B%E5%8C%96%E5%AF%B9%E8%B1%A1"><span class="toc-text">通过读取属性文件实例化对象</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%B1%BB%E8%B7%AF%E5%BE%84-src%E8%B7%AF%E5%BE%84-%E4%B8%8B%E7%9A%84%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84"><span class="toc-text">获取类路径(src路径)下的绝对路径</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%AE%80%E8%BF%B0"><span class="toc-text">类加载器简述</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E7%BB%91%E5%AE%9A%E5%99%A8"><span class="toc-text">资源绑定器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E7%9A%84%E6%A0%B9%E8%B7%AF%E5%BE%84"><span class="toc-text">类的根路径</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-text">常用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#java-lang-Class"><span class="toc-text">java.lang.Class</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#java-lang-reflect-Field"><span class="toc-text">java.lang.reflect.Field</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#java-lang-reflect-Method"><span class="toc-text">java.lang.reflect.Method</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#java-lang-reflect-Construct"><span class="toc-text">java.lang.reflect.Construct</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E7%9A%84%E5%8F%8D%E7%BC%96%E8%AF%91"><span class="toc-text">类的反编译</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E5%B1%9E%E6%80%A7-%E8%AE%BE%E7%BD%AE%E8%8E%B7%E5%8F%96%E5%B1%9E%E6%80%A7%E5%80%BC"><span class="toc-text">访问属性(设置获取属性值)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E6%96%B0%E5%BB%BA%E5%AF%B9%E8%B1%A1"><span class="toc-text">通过反射机制新建对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%88%B6%E7%B1%BB%E4%BF%A1%E6%81%AF%E5%92%8C%E5%AE%9E%E7%8E%B0%E7%9A%84%E6%8E%A5%E5%8F%A3%E4%BF%A1%E6%81%AF"><span class="toc-text">获取父类信息和实现的接口信息</span></a></li></ol></li></ol>
+    </div>
+  </section>
+
+
+  
+
+
+</aside>
+
+
+
+		  
+		  <!--此文件用来存放一些不方便取值的变量-->
+<!--思路大概是将值藏到重加载的区域内-->
+
+<script>
+  window.pdata={}
+  pdata.ispage=true;
+  pdata.postTitle="java反射机制";
+  pdata.commentPath="";
+  pdata.commentPlaceholder="";
+  // header 这里无论是否开启pjax都需要
+  var l_header=document.getElementById("l_header");
+  
+  l_header.classList.add("show");
+  
+  
+    // cover
+    var cover_wrapper=document.querySelector('.cover-wrapper');
+    
+    cover_wrapper.id="none";
+    cover_wrapper.style.display="none";
+    
+  
+</script>
+
+        </div>
+        
+  
+  <footer class="footer clearfix">
+    <br><br>
+    
+      
+        <div class="aplayer-container">
+          
+
+
+        </div>
+      
+    
+      
+        <br>
+        <div class="social-wrapper">
+          
+            
+          
+            
+          
+            
+          
+        </div>
+      
+    
+      
+        <div><p>Blog content follows the <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) License</a></p>
+</div>
+      
+    
+      
+        
+          <div><p><span id="lc-sv">本站总访问量为 <span id='number'><i class="fas fa-circle-notch fa-spin fa-fw" aria-hidden="true"></i></span> 次</span> <span id="lc-uv">访客数为 <span id='number'><i class="fas fa-circle-notch fa-spin fa-fw" aria-hidden="true"></i></span> 人</span></p>
+</div>
+        
+      
+    
+      
+        Use
+        <a href="https://github.com/volantis-x/hexo-theme-volantis/tree/4.3.1" target="_blank" class="codename">Volantis</a>
+        as theme
+      
+    
+      
+        <div class='copyright'>
+        <p><a href="/">Copyright © 2017-2020 XXX</a></p>
+
+        </div>
+      
+    
+  </footer>
+
+
+        <a id="s-top" class="fas fa-arrow-up fa-fw" href="javascript:void(0)"></a>
+      </div>
+    </div>
+    <div>
+      <script>
+/************这个文件存放不需要重载的全局变量和全局函数*********/
+window.volantis={};
+window.volantis.loadcss=document.getElementById("loadcss");
+/******************** Pjax ********************************/
+function VPjax(){
+	this.list=[] // 存放回调函数
+	this.start=()=>{
+	  for(var i=0;i<this.list.length;i++){
+		this.list[i].run();
+	  }
+	}
+	this.push=(fn,name)=>{
+		var f=new PjaxItem(fn,name);
+		this.list.push(f);
+	}
+	// 构造一个可以run的对象
+	function PjaxItem(fn,name){
+		// 函数名称
+		this.name = name || fn.name
+		// run方法
+		this.run=()=>{
+			fn()
+		}
+	}
+}
+volantis.pjax={}
+volantis.pjax.method={
+	complete: new VPjax(),
+	error: new VPjax(),
+	send: new VPjax()
+}
+volantis.pjax={
+	...volantis.pjax,
+	push: volantis.pjax.method.complete.push,
+	error: volantis.pjax.method.error.push,
+	send: volantis.pjax.method.send.push
+}
+/********************脚本懒加载函数********************************/
+// 已经加入了setTimeout
+function loadScript(src, cb) {
+	setTimeout(function() {
+		var HEAD = document.getElementsByTagName('head')[0] || document.documentElement;
+		var script = document.createElement('script');
+		script.setAttribute('type','text/javascript');
+		if (cb) script.onload = cb;
+		script.setAttribute('src', src);
+		HEAD.appendChild(script);
+	});
+}
+//https://github.com/filamentgroup/loadCSS
+var loadCSS = function( href, before, media, attributes ){
+	var doc = window.document;
+	var ss = doc.createElement( "link" );
+	var ref;
+	if( before ){
+		ref = before;
+	}
+	else {
+		var refs = ( doc.body || doc.getElementsByTagName( "head" )[ 0 ] ).childNodes;
+		ref = refs[ refs.length - 1];
+	}
+	var sheets = doc.styleSheets;
+	if( attributes ){
+		for( var attributeName in attributes ){
+			if( attributes.hasOwnProperty( attributeName ) ){
+				ss.setAttribute( attributeName, attributes[attributeName] );
+			}
+		}
+	}
+	ss.rel = "stylesheet";
+	ss.href = href;
+	ss.media = "only x";
+	function ready( cb ){
+		if( doc.body ){
+			return cb();
+		}
+		setTimeout(function(){
+			ready( cb );
+		});
+	}
+	ready( function(){
+		ref.parentNode.insertBefore( ss, ( before ? ref : ref.nextSibling ) );
+	});
+	var onloadcssdefined = function( cb ){
+		var resolvedHref = ss.href;
+		var i = sheets.length;
+		while( i-- ){
+			if( sheets[ i ].href === resolvedHref ){
+				return cb();
+			}
+		}
+		setTimeout(function() {
+			onloadcssdefined( cb );
+		});
+	};
+	function loadCB(){
+		if( ss.addEventListener ){
+			ss.removeEventListener( "load", loadCB );
+		}
+		ss.media = media || "all";
+	}
+	if( ss.addEventListener ){
+		ss.addEventListener( "load", loadCB);
+	}
+	ss.onloadcssdefined = onloadcssdefined;
+	onloadcssdefined( loadCB );
+	return ss;
+};
+</script>
+<script>
+  
+  loadCSS("https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14/css/all.min.css", window.volantis.loadcss);
+  
+  
+  
+  
+</script>
+<!-- required -->
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5/dist/jquery.min.js"></script>
+
+<script>
+  function pjax_fancybox() {
+    $(".md .gallery").find("img").each(function () { //渲染 fancybox
+      var element = document.createElement("a"); // a 标签
+      $(element).attr("class", "fancybox");
+      $(element).attr("pjax-fancybox", "");  // 过滤 pjax
+      $(element).attr("href", $(this).attr("src"));
+      if ($(this).attr("data-original")) {
+        $(element).attr("href", $(this).attr("data-original"));
+      }
+      $(element).attr("data-fancybox", "images");
+      var caption = "";   // 描述信息
+      if ($(this).attr('alt')) {  // 判断当前页面是否存在描述信息
+        $(element).attr('data-caption', $(this).attr('alt'));
+        caption = $(this).attr('alt');
+      }
+      var div = document.createElement("div");
+      $(div).addClass("fancybox");
+      $(this).wrap(div); // 最外层套 div ，其实主要作用还是 class 样式
+      var span = document.createElement("span");
+      $(span).addClass("image-caption");
+      $(span).text(caption); // 加描述
+      $(this).after(span);  // 再套一层描述
+      $(this).wrap(element);  // 最后套 a 标签
+    })
+    $(".md .gallery").find("img").fancybox({
+      selector: '[data-fancybox="images"]',
+      hash: false,
+      loop: false,
+      closeClick: true,
+      helpers: {
+        overlay: {closeClick: true}
+      },
+      buttons: [
+        "zoom",
+        "close"
+      ]
+    });
+  };
+  function SCload_fancybox() {
+    if ($(".md .gallery").find("img").length == 0) return;
+    loadCSS("https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css", document.getElementById("loadcss"));
+    loadScript('https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js', pjax_fancybox)
+  };
+  $(function () {
+    SCload_fancybox();
+  });
+  function Pjax_SCload_fancybox(){
+	if (typeof $.fancybox == "undefined") {
+	 SCload_fancybox();
+    } else {
+	 pjax_fancybox();
+    }
+  }
+  volantis.pjax.push(Pjax_SCload_fancybox)
+  volantis.pjax.send(()=>{
+      if (typeof $.fancybox != "undefined") {
+        $.fancybox.close();    // 关闭弹窗
+      }
+  },'fancybox')
+</script>
+
+
+<!-- internal -->
+
+
+
+
+<script>
+  function loadIssuesJS() {
+    if ($(".md").find(".issues-api").length == 0) return;
+	
+	  loadScript('/js/issues.js');
+	
+  };
+  $(function () {
+    loadIssuesJS();
+  });
+  volantis.pjax.push(()=>{
+	if (typeof IssuesAPI == "undefined") {
+	  loadIssuesJS();
+	}
+  },"IssuesJS")
+</script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazyload",
+    threshold: 0
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    lazyLoadInstance.update();
+  });
+  document.addEventListener('pjax:complete', function () {
+    lazyLoadInstance.update();
+  });
+</script>
+
+
+
+
+  
+
+<script>
+  window.FPConfig = {
+	delay: 0,
+	ignoreKeywords: [],
+	maxRPS: 5,
+	hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/gh/gijo-varghese/flying-pages@2.1.2/flying-pages.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+<script src="/js/valine.js"></script>
+
+
+<script>
+  function emoji(path, idx, ext) {
+    return path + "/" + path + "-" + idx + "." + ext;
+  }
+  var emojiMaps = {};
+  for (var i = 1; i <= 54; i++) {
+    emojiMaps['tieba-' + i] = emoji('tieba', i, 'png');
+  }
+  for (var i = 1; i <= 101; i++) {
+    emojiMaps['qq-' + i] = emoji('qq', i, 'gif');
+  }
+  for (var i = 1; i <= 116; i++) {
+    emojiMaps['aru-' + i] = emoji('aru', i, 'gif');
+  }
+  for (var i = 1; i <= 125; i++) {
+    emojiMaps['twemoji-' + i] = emoji('twemoji', i, 'png');
+  }
+  for (var i = 1; i <= 4; i++) {
+    emojiMaps['weibo-' + i] = emoji('weibo', i, 'png');
+  }
+  function pjax_valine() {
+    if(!document.querySelectorAll("#valine_container")[0])return;
+    let pagePlaceholder = pdata.commentPlaceholder || "快来评论吧~";
+    let path = pdata.commentPath;
+    if (path.length == 0) {
+      let defaultPath = '';
+      path = defaultPath || decodeURI(window.location.pathname);
+    }
+    var valine = new Valine();
+    valine.init(Object.assign({"path":null,"placeholder":"快来评论吧~","appId":null,"appKey":null,"meta":["nick","mail","link"],"requiredFields":["nick","mail"],"enableQQ":true,"recordIP":false,"avatar":"robohash","pageSize":10,"lang":"zh-cn","highlight":true,"mathJax":false}, {
+      el: '#valine_container',
+      path: path,
+      placeholder: pagePlaceholder,
+      emojiCDN: 'https://cdn.jsdelivr.net/gh/volantis-x/cdn-emoji/valine/',
+      emojiMaps: emojiMaps,
+    }))
+  }
+  $(function () {
+    pjax_valine();
+  });
+  volantis.pjax.push(pjax_valine);
+</script>
+
+
+
+
+
+
+  
+<script src="/js/app.js"></script>
+
+
+
+<!-- optional -->
+
+  <script>
+const SearchServiceimagePath="https://cdn.jsdelivr.net/gh/volantis-x/cdn-volantis@master/img/";
+const ROOT =  ("/" || "/").endsWith('/') ? ("/" || "/") : ("//" || "/" );
+
+$('.input.u-search-input').one('focus',function(){
+	
+		loadScript('/js/search/hexo.js',setSearchService);
+	
+})
+
+function listenSearch(){
+  
+    customSearch = new HexoSearch({
+      imagePath: SearchServiceimagePath
+    });
+  
+}
+function setSearchService() {
+	listenSearch();
+	
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  <script defer>
+
+  const LCCounter = {
+    app_id: 'u9j57bwJod4EDmXWdxrwuqQT-MdYXbMMI',
+    app_key: 'jfHtEKVE24j0IVCGHbvuFClp',
+    custom_api_server: '',
+
+    // 查询存储的记录
+    getRecord(Counter, url, title) {
+      return new Promise(function (resolve, reject) {
+        Counter('get', '/classes/Counter?where=' + encodeURIComponent(JSON.stringify({url})))
+          .then(resp => resp.json())
+          .then(({results, code, error}) => {
+            if (code === 401) {
+              throw error;
+            }
+            if (results && results.length > 0) {
+              var record = results[0];
+              resolve(record);
+            } else {
+              Counter('post', '/classes/Counter', {url, title: title, times: 0})
+                .then(resp => resp.json())
+                .then((record, error) => {
+                  if (error) {
+                    throw error;
+                  }
+                  resolve(record);
+                }).catch(error => {
+                console.error('Failed to create', error);
+                reject(error);
+              });
+            }
+          }).catch((error) => {
+          console.error('LeanCloud Counter Error:', error);
+          reject(error);
+        });
+      })
+    },
+
+    // 发起自增请求
+    increment(Counter, incrArr) {
+      return new Promise(function (resolve, reject) {
+        Counter('post', '/batch', {
+          "requests": incrArr
+        }).then((res) => {
+          res = res.json();
+          if (res.error) {
+            throw res.error;
+          }
+          resolve(res);
+        }).catch((error) => {
+          console.error('Failed to save visitor count', error);
+          reject(error);
+        });
+      });
+    },
+
+    // 构建自增请求体
+    buildIncrement(objectId) {
+      return {
+        "method": "PUT",
+        "path": `/1.1/classes/Counter/${ objectId }`,
+        "body": {
+          "times": {
+            '__op': 'Increment',
+            'amount': 1
+          }
+        }
+      }
+    },
+
+    // 校验是否为有效的 UV
+    validUV() {
+      var key = 'LeanCloudUVTimestamp';
+      var flag = localStorage.getItem(key);
+      if (flag) {
+        // 距离标记小于 24 小时则不计为 UV
+        if (new Date().getTime() - parseInt(flag) <= 86400000) {
+          return false;
+        }
+      }
+      localStorage.setItem(key, new Date().getTime().toString());
+      return true;
+    },
+
+    addCount(Counter) {
+      var enableIncr = '' === 'true' && window.location.hostname !== 'localhost';
+      enableIncr = true;
+      var getterArr = [];
+      var incrArr = [];
+      // 请求 PV 并自增
+      var pvCtn = document.querySelector('#lc-sv');
+      if (pvCtn || enableIncr) {
+        var pvGetter = this.getRecord(Counter, 'http://example.com' + '/#lc-sv', 'Visits').then((record) => {
+          incrArr.push(this.buildIncrement(record.objectId))
+          var eles = document.querySelectorAll('#lc-sv #number');
+          if (eles.length > 0) {
+            eles.forEach((el,index,array)=>{
+              el.innerText = record.times + 1;
+              if (pvCtn) {
+                pvCtn.style.display = 'inline';
+              }
+            })
+          }
+        });
+        getterArr.push(pvGetter);
+      }
+
+      // 请求 UV 并自增
+      var uvCtn = document.querySelector('#lc-uv');
+      if (uvCtn || enableIncr) {
+        var uvGetter = this.getRecord(Counter, 'http://example.com' + '/#lc-uv', 'Visitors').then((record) => {
+          var vuv = this.validUV();
+          vuv && incrArr.push(this.buildIncrement(record.objectId))
+          var eles = document.querySelectorAll('#lc-uv #number');
+          if (eles.length > 0) {
+            eles.forEach((el,index,array)=>{
+              el.innerText = record.times + (vuv ? 1 : 0);
+              if (uvCtn) {
+                uvCtn.style.display = 'inline';
+              }
+            })
+          }
+        });
+        getterArr.push(uvGetter);
+      }
+
+      // 请求文章的浏览数，如果是当前页面就自增
+      var allPV = document.querySelectorAll('#lc-pv');
+      if (allPV.length > 0 || enableIncr) {
+        for (i = 0; i < allPV.length; i++) {
+          let pv = allPV[i];
+          let title = pv.getAttribute('data-title');
+          var url = 'http://example.com' + pv.getAttribute('data-path');
+          if (url) {
+            var viewGetter = this.getRecord(Counter, url, title).then((record) => {
+              // 是当前页面就自增
+              let curPath = window.location.pathname;
+              if (curPath.includes('index.html')) {
+                curPath = curPath.substring(0, curPath.lastIndexOf('index.html'));
+              }
+              if (pv.getAttribute('data-path') == curPath) {
+                incrArr.push(this.buildIncrement(record.objectId));
+              }
+              if (pv) {
+                var ele = pv.querySelector('#lc-pv #number');
+                if (ele) {
+                  if (pv.getAttribute('data-path') == curPath) {
+                    ele.innerText = (record.times || 0) + 1;
+                  } else {
+                    ele.innerText = record.times || 0;
+                  }
+                  pv.style.display = 'inline';
+                }
+              }
+            });
+            getterArr.push(viewGetter);
+          }
+        }
+      }
+
+      // 如果启动计数自增，批量发起自增请求
+      if (enableIncr) {
+        Promise.all(getterArr).then(() => {
+          incrArr.length > 0 && this.increment(Counter, incrArr);
+        })
+      }
+
+    },
+
+
+    fetchData(api_server) {
+      var Counter = (method, url, data) => {
+        return fetch(`${ api_server }/1.1${ url }`, {
+          method,
+          headers: {
+            'X-LC-Id': this.app_id,
+            'X-LC-Key': this.app_key,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data)
+        });
+      };
+      this.addCount(Counter);
+    },
+
+    refreshCounter() {
+      var api_server = this.app_id.slice(-9) !== '-MdYXbMMI' ? this.custom_api_server : `https://${ this.app_id.slice(0, 8).toLowerCase() }.api.lncldglobal.com`;
+      if (api_server) {
+        this.fetchData(api_server);
+      } else {
+        fetch('https://app-router.leancloud.cn/2/route?appId=' + this.app_id)
+          .then(resp => resp.json())
+          .then(({api_server}) => {
+            this.fetchData('https://' + api_server);
+          });
+      }
+    }
+
+  };
+
+  LCCounter.refreshCounter();
+
+  document.addEventListener('pjax:complete', function () {
+    LCCounter.refreshCounter();
+  });
+</script>
+
+
+
+
+  <script>
+const rootElement = document.documentElement;
+const darkModeStorageKey = "user-color-scheme";
+const rootElementDarkModeAttributeName = "data-user-color-scheme";
+
+const setLS = (k, v) => {
+    localStorage.setItem(k, v);
+};
+
+const removeLS = (k) => {
+    localStorage.removeItem(k);
+};
+
+const getLS = (k) => {
+    return localStorage.getItem(k);
+};
+
+const getModeFromCSSMediaQuery = () => {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+};
+
+const resetRootDarkModeAttributeAndLS = () => {
+  rootElement.removeAttribute(rootElementDarkModeAttributeName);
+  removeLS(darkModeStorageKey);
+};
+
+const validColorModeKeys = {
+  dark: true,
+  light: true,
+};
+
+const applyCustomDarkModeSettings = (mode) => {
+  const currentSetting = mode || getLS(darkModeStorageKey);
+
+  if (currentSetting === getModeFromCSSMediaQuery()) {
+    resetRootDarkModeAttributeAndLS();
+  } else if (validColorModeKeys[currentSetting]) {
+    rootElement.setAttribute(rootElementDarkModeAttributeName, currentSetting);
+  } else {
+    resetRootDarkModeAttributeAndLS();
+  }
+};
+
+const invertDarkModeObj = {
+  dark: "light",
+  light: "dark",
+};
+
+/**
+ * get target mode
+ */
+const toggleCustomDarkMode = () => {
+  let currentSetting = getLS(darkModeStorageKey);
+
+  if (validColorModeKeys[currentSetting]) {
+    currentSetting = invertDarkModeObj[currentSetting];
+  } else if (currentSetting === null) {
+    currentSetting = invertDarkModeObj[getModeFromCSSMediaQuery()];
+  } else {
+    return;
+  }
+  setLS(darkModeStorageKey, currentSetting);
+  return currentSetting;
+};
+
+/**
+ * bind click event for toggle button
+ */
+var btn=$("#wrapper .toggle-mode-btn,#rightmenu-wrapper .toggle-mode-btn");
+function bindToggleButton() {
+    btn.on('click',(e) => {
+      const mode = toggleCustomDarkMode();
+      applyCustomDarkModeSettings(mode);
+    });
+}
+
+applyCustomDarkModeSettings();
+document.addEventListener("DOMContentLoaded", bindToggleButton);
+volantis.pjax.push(bindToggleButton);
+volantis.pjax.send(()=>{
+	btn.unbind('click');
+},'toggle-mode-btn-unbind');
+</script>
+
+
+
+
+
+
+
+
+<script>
+function listennSidebarTOC() {
+  const navItems = document.querySelectorAll(".toc li");
+  if (!navItems.length) return;
+  const sections = [...navItems].map((element) => {
+    const link = element.querySelector(".toc-link");
+    const target = document.getElementById(
+      decodeURI(link.getAttribute("href")).replace("#", "")
+    );
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      window.scrollTo({
+		top: target.offsetTop + 100,
+		
+		behavior: "smooth"
+		
+	  });
+    });
+    return target;
+  });
+
+  function activateNavByIndex(target) {
+    if (target.classList.contains("active-current")) return;
+
+    document.querySelectorAll(".toc .active").forEach((element) => {
+      element.classList.remove("active", "active-current");
+    });
+    target.classList.add("active", "active-current");
+    let parent = target.parentNode;
+    while (!parent.matches(".toc")) {
+      if (parent.matches("li")) parent.classList.add("active");
+      parent = parent.parentNode;
+    }
+  }
+
+  function findIndex(entries) {
+    let index = 0;
+    let entry = entries[index];
+    if (entry.boundingClientRect.top > 0) {
+      index = sections.indexOf(entry.target);
+      return index === 0 ? 0 : index - 1;
+    }
+    for (; index < entries.length; index++) {
+      if (entries[index].boundingClientRect.top <= 0) {
+        entry = entries[index];
+      } else {
+        return sections.indexOf(entry.target);
+      }
+    }
+    return sections.indexOf(entry.target);
+  }
+
+  function createIntersectionObserver(marginTop) {
+    marginTop = Math.floor(marginTop + 10000);
+    let intersectionObserver = new IntersectionObserver(
+      (entries, observe) => {
+        let scrollHeight = document.documentElement.scrollHeight + 100;
+        if (scrollHeight > marginTop) {
+          observe.disconnect();
+          createIntersectionObserver(scrollHeight);
+          return;
+        }
+        let index = findIndex(entries);
+        activateNavByIndex(navItems[index]);
+      },
+      {
+        rootMargin: marginTop + "px 0px -100% 0px",
+        threshold: 0,
+      }
+    );
+    sections.forEach((element) => {
+      element && intersectionObserver.observe(element);
+    });
+  }
+  createIntersectionObserver(document.documentElement.scrollHeight);
+}
+
+document.addEventListener("DOMContentLoaded", listennSidebarTOC);
+document.addEventListener("pjax:success", listennSidebarTOC);
+</script>
+
+<!-- more -->
+
+ 
+	   
+	    
+
+
+<script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script>
+
+
+<script>
+    var pjax;
+    document.addEventListener('DOMContentLoaded', function () {
+      pjax = new Pjax({
+        elements: 'a[href]:not([href^="#"]):not([href="javascript:void(0)"]):not([pjax-fancybox])',
+        selectors: [
+          "title",
+          
+          "#pjax-container",
+          "#pjax-header-nav-list"
+        ],
+        cacheBust: false,   // url 地址追加时间戳，用以避免浏览器缓存
+        timeout: 5000
+      });
+    });
+
+    document.addEventListener('pjax:send', function (e) {
+      //window.stop(); // 相当于点击了浏览器的停止按钮
+
+      try {
+        var currentUrl = window.location.pathname;
+        var targetUrl = e.triggerElement.href;
+        var banUrl = [""];
+        if (banUrl[0] != "") {
+          banUrl.forEach(item => {
+            if(currentUrl.indexOf(item) != -1 || targetUrl.indexOf(item) != -1) {
+              window.location.href = targetUrl;
+            }
+          });
+        }
+      } catch (error) {}
+
+      window.subData = null; // 移除标题（用于一二级导航栏切换处）
+
+      volantis.$switcher.removeClass('active'); // 关闭移动端激活的搜索框
+      volantis.$header.removeClass('z_search-open'); // 关闭移动端激活的搜索框
+      volantis.$wrapper.removeClass('sub'); // 跳转页面时关闭二级导航
+
+      // 解绑事件 避免重复监听
+      volantis.$topBtn.unbind('click');
+      $('.menu a').unbind('click');
+      $(window).unbind('resize');
+      $(window).unbind('scroll');
+      $(document).unbind('scroll');
+      $(document).unbind('click');
+      $('body').unbind('click');
+	  // 使用 volantis.pjax.send 方法传入pjax:send回调函数 参见layout/_partial/scripts/global.ejs
+	  volantis.pjax.method.send.start();
+    });
+
+    document.addEventListener('pjax:complete', function () {
+      $('.nav-main').find('.list-v').not('.menu-phone').removeAttr("style",""); // 移除小尾巴的移除
+      $('.menu-phone.list-v').removeAttr("style",""); // 移除小尾巴的移除
+      $('script[data-pjax], .pjax-reload script').each(function () {
+        $(this).parent().append($(this).remove());
+      });
+      try{
+		// 使用 volantis.pjax.push 方法传入重载函数 参见layout/_partial/scripts/global.ejs
+		volantis.pjax.method.complete.start();
+      } catch (e) {
+        console.log(e);
+      }
+    });
+
+    document.addEventListener('pjax:error', function (e) {
+	  // 使用 volantis.pjax.error 方法传入pjax:error回调函数 参见layout/_partial/scripts/global.ejs
+	  volantis.pjax.method.error.start();
+      window.location.href = e.triggerElement.href;
+    });
+</script>
+ 
+	  
+    </div>
+  </body>
+</html>

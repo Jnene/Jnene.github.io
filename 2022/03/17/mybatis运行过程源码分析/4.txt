@@ -1,0 +1,150 @@
+### 4.执行增删改查
+
+这里由于Debug时字节码和源码不匹配，没办法跟进运行过程，所以临时将mybatis版本置换为3.4.1，源码改动不大，相较而言有些地方3.4.1更容易看懂
+
+步入empMapper.selectByPrimaryKey(1)方法
+
+![](4-1.jpg)
+
+return语句是判断方法所属的类是否为Object，这里的方法是我们接口中定义的selectByPrimaryKey方法，方法所属的是一个接口不是Object，所以执行else语句。我们步入else语句中的mapperMethod.execute(this.sqlSession, args)方法，代码如下
+
+```java
+public Object execute(SqlSession sqlSession, Object[] args) {
+	Object param;
+	Object result;
+    switch(this.command.getType()) {
+    	case INSERT:
+            param = this.method.convertArgsToSqlCommandParam(args);
+            result = this.rowCountResult(sqlSession.insert(this.command.getName(), param));
+            break;
+        case UPDATE:
+            param = this.method.convertArgsToSqlCommandParam(args);
+            result = this.rowCountResult(sqlSession.update(this.command.getName(), param));
+            break;
+        case DELETE:
+            param = this.method.convertArgsToSqlCommandParam(args);
+            result = this.rowCountResult(sqlSession.delete(this.command.getName(), param));
+            break;
+        case SELECT:
+            if (this.method.returnsVoid() && this.method.hasResultHandler()) {
+                this.executeWithResultHandler(sqlSession, args);
+                result = null;
+            } else if (this.method.returnsMany()) {
+                result = this.executeForMany(sqlSession, args);
+            } else if (this.method.returnsMap()) {
+                result = this.executeForMap(sqlSession, args);
+            } else if (this.method.returnsCursor()) {
+                result = this.executeForCursor(sqlSession, args);
+            } else {
+                param = this.method.convertArgsToSqlCommandParam(args);
+                result = sqlSession.selectOne(this.command.getName(), param);
+            }
+            break;
+        case FLUSH:
+            result = sqlSession.flushStatements();
+            break;
+        default:
+            throw new BindingException("Unknown execution method for: " + this.command.getName());
+	}
+
+	if (result == null && this.method.getReturnType().isPrimitive() && !this.method.returnsVoid()) {
+		throw new BindingException("Mapper method '" + this.command.getName() + " attempted to return null from a method with a primitive return type (" + this.method.getReturnType() + ").");
+	} else {
+    	return result;
+	}
+}
+```
+
+这里是根据不同的sql语句类型去执行不同的case代码块，我们这里是Select语句，直接观察`case SELECT:`语句中的内容
+
+![](4-2.jpg)
+
+这里的if语句判断我们返回值的类型或个数，这里我们接口的返回值为一个Emp对象，直接看相应的代码
+
+![](4-3.jpg)
+
+该语句块代码首先是处理方法参数，然后调用sqlSession.selectOne()方法执行sql语句，我们先看mybatis是如何处理方法参数的。步入this.method.convertArgsToSqlCommandParam(args)方法
+
+![](4-4.jpg)
+
+继续步入this.paramNameResolver.getNamedParams(args)方法
+
+![](4-5.jpg)
+
+如果有参数的话我们进入if封装参数。
+
+如果我们只有一个参数并且没有用@Param注解表示参数的话，就会直接返回这个参数；如果有多个参数的话，这部分将参数都封装到Map中返回，且Map中的Key是`param1，param2，param3....`的形式。
+
+封装完参数，回到sqlSession.selectOne执行sql语句部分，步入sqlSession.selectOne(this.command.getName(), param)方法
+
+![](4-6.jpg)
+
+该方法将执行结果封装为一个List返回，步入this.selectList(statement, parameter)方法查看语句执行过程
+
+![](4-7.jpg)
+
+步入this.selectList(statement, parameter, RowBounds.DEFAULT)方法
+
+![](4-8.jpg)
+
+该方法得到configuration中的MappedStatement信息，并作为参数传入this.executor.query(ms, this.wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER)方法，步入该方法
+
+![](4-9.jpg)
+
+该方法将我们要执行的sql语句封装至boundSql对象并设置缓存的key，我们继续步入this.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql)方法
+
+![](4-10.jpg)
+
+该方法首先设置缓存的相关信息，然后调用this.delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql)方法，步入该方法，方法代码如下：
+
+```java
+public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
+	ErrorContext.instance().resource(ms.getResource()).activity("executing a query").object(ms.getId());
+    if (this.closed) {
+    	throw new ExecutorException("Executor was closed.");
+	} else {
+    	if (this.queryStack == 0 && ms.isFlushCacheRequired()) {
+        	this.clearLocalCache();
+		}
+
+        List list;
+        try {
+        	++this.queryStack;
+        	list = resultHandler == null ? (List)this.localCache.getObject(key) : null;
+        	if (list != null) {
+        		this.handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
+            } else {
+            	list = this.queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
+            }
+        } finally {
+        	--this.queryStack;
+        }
+
+        if (this.queryStack == 0) {
+        	Iterator i$ = this.deferredLoads.iterator();
+
+            while(i$.hasNext()) {
+            	BaseExecutor.DeferredLoad deferredLoad = (BaseExecutor.DeferredLoad)i$.next();
+            	deferredLoad.load();
+            }
+
+            this.deferredLoads.clear();
+            if (this.configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) {
+            	this.clearLocalCache();
+            }
+		}
+
+    	return list;
+	}
+}
+```
+
+这里我们主要关注`list = this.queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);`语句
+
+![](4-11.jpg)
+
+步入该语句this.queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql)方法
+
+![](4-12.jpg)
+
+这里主要关注this.doQuery(ms, parameter, rowBounds, resultHandler, boundSql)方法的执行，步入该方法
