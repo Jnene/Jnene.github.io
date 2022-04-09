@@ -5,8 +5,6 @@
   <!-- SEO相关 -->
   
     
-      <meta name="robots" content="noindex,follow">
-    
   
   <!-- 渲染优化 -->
   <meta http-equiv='x-dns-prefetch-control' content='on' />
@@ -24,7 +22,9 @@
 
   <!-- 页面元数据 -->
   
-  <title>Tag: java - NeNe&#39;s Blog</title>
+  <title>SpringBoot自动配置源码分析 - NeNe&#39;s Blog</title>
+  
+    <meta name="keywords" content="框架">
   
 
   
@@ -355,7 +355,7 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
       <div id="l_cover">
   
     
-        <div id="full" class='cover-wrapper  dock' style="display: none;">
+        <div id="full" class='cover-wrapper post dock' style="display: none;">
           
             <div class='cover-bg lazyload placeholder' data-bg="https://uploadbeta.com/api/pictures/random/?key=BingEverydayWallpaperPicture"></div>
           
@@ -430,181 +430,276 @@ if (/*@cc_on!@*/false || (!!window.MSInputMethodContext && !!document.documentMo
         <div class="body-wrapper" id="pjax-container">
           
 
-
 <div class='l_main'>
+  <article class="article post white-box reveal md shadow article-type-post" id="post" itemscope itemprop="blogPost">
   
+
+
+  
+  <div class="article-meta" id="top">
     
-      
-  <section class="post-list">
     
-      
+    
+      <h1 class="title">
+        SpringBoot自动配置源码分析
+      </h1>
+      <div class='new-meta-box'>
         
+          
+            
+<div class='new-meta-item author'>
+  <a class='author' href="/" rel="nofollow">
+    <img no-lazy src="">
+    <p>请设置文章作者</p>
+  </a>
+</div>
+
           
         
           
-        
+            
+
           
         
-      
-    
-    
-      
-        
-          <div class='post-wrapper'>
-            <div class="post post-v3 white-box reveal shadow">
-  
-  
-  
-  
-    
-    <h2 class="article-title" >
-      <a href="/2022/03/15/Java%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/">
-        线程安全——Java
-      </a>
-    </h2>
-  
-  <div class='md'>
-    
-      
-        线程安全——Java[toc]
-导致线程安全问题的原因
-线程之间共享变量
-线程对共享变量修改
+          
+            <div class="new-meta-item date">
+  <a class='notlink'>
+    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
+    <p>发布于：Apr 8, 2022</p>
+  </a>
+</div>
 
-如何解决线程安全问题保证并发的原子性、可见性、顺序性
-原子性​    保证一个操作要么都执行，要么都不执行。以取款为例，假设我们取款分为2步，第一步取钱，第二部更新余额。如果完成第一步之后出现异常导致第二步没有执行，就会出现问题。
-可见性​    保证变量的值被修改后能够立即获取变量被修改后的值。...
-      
-    
-  </div>
-  
-    <div class='meta-v3' line_style='solid'>
-      <div>
+          
         
-        <time>2022-03-15</time>
+          
+            
+  <div class="new-meta-item browse leancloud">
+    <a class='notlink'>
+      
+      <div id="lc-pv" data-title="SpringBoot自动配置源码分析" data-path="/2022/04/08/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+        <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
+        <span id='number'><i class="fas fa-circle-notch fa-spin fa-fw" aria-hidden="true"></i></span>
+        次浏览
+      </div>
+    </a>
+  </div>
+
+
+          
         
       </div>
+    
+  </div>
+
+
+  
+  
+  <p>[toc]</p>
+<h1 id="SpringBoot自动配置源码分析"><a href="#SpringBoot自动配置源码分析" class="headerlink" title="SpringBoot自动配置源码分析"></a>SpringBoot自动配置源码分析</h1><p>​    SpringBoot的一大特性就是自动配置，只要我们导入相应的<code>start</code>场景，SpringBoot就会自动为我们做好有关的配置。例如当我们引入<code>spring-boot-starter-web</code>场景后，SpringBoot会帮我们自动做好Spring和SpringMVC的整合工作，已经做好Tomcat的配置，我们只需要使用就可以。</p>
+<h2 id="自动装配的大致流程"><a href="#自动装配的大致流程" class="headerlink" title="自动装配的大致流程"></a>自动装配的大致流程</h2><p>​    SpringBoot的启动类需要标注<code>@SpringBootApplication</code>，查看该注解源码，该注解又被<code>@EnableAutoConfiguration</code>注解标注，<code>@EnableAutoConfiguration</code>注解又被<code>@Import(&#123;AutoConfigurationImportSelector.class&#125;)</code>标注，对于<code>ImportSelector</code>的子类<code>@Import</code>注解的功能是将该实现类**selectImports()**方法返回的类名称加载到IOC容器中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String[] selectImports(AnnotationMetadata annotationMetadata) &#123;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="keyword">this</span>.isEnabled(annotationMetadata)) </span><br><span class="line">    	<span class="keyword">return</span> NO_IMPORTS;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        AutoConfigurationImportSelector.AutoConfigurationEntry autoConfigurationEntry = 	<span class="keyword">this</span>.getAutoConfigurationEntry(annotationMetadata);</span><br><span class="line">      	<span class="keyword">return</span> StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());</span><br><span class="line">   	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该方法返回值由<code>autoConfigurationEntry</code>对象封装，此对象的返回值由<code>this.getAutoConfigurationEntry(annotationMetadata)</code>方法得到</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> AutoConfigurationImportSelector.<span class="function">AutoConfigurationEntry <span class="title">getAutoConfigurationEntry</span><span class="params">(AnnotationMetadata annotationMetadata)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="keyword">this</span>.isEnabled(annotationMetadata)) &#123;</span><br><span class="line">		<span class="keyword">return</span> EMPTY_ENTRY;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		AnnotationAttributes attributes = <span class="keyword">this</span>.getAttributes(annotationMetadata);</span><br><span class="line">        <span class="comment">//获取要自动配置类的类名</span></span><br><span class="line">        List&lt;String&gt; configurations = <span class="keyword">this</span>.getCandidateConfigurations(annotationMetadata, attributes);</span><br><span class="line">        <span class="comment">//对configurations的处理工作</span></span><br><span class="line">        configurations = <span class="keyword">this</span>.removeDuplicates(configurations);</span><br><span class="line">        Set&lt;String&gt; exclusions = <span class="keyword">this</span>.getExclusions(annotationMetadata, attributes);</span><br><span class="line">        <span class="keyword">this</span>.checkExcludedClasses(configurations, exclusions);</span><br><span class="line">        configurations.removeAll(exclusions);</span><br><span class="line">        configurations = <span class="keyword">this</span>.getConfigurationClassFilter().filter(configurations);</span><br><span class="line">        <span class="keyword">this</span>.fireAutoConfigurationImportEvents(configurations, exclusions);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> AutoConfigurationImportSelector.AutoConfigurationEntry(configurations, exclusions);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自动配置类的类名封装在<code>configurations</code>对象中，该对象的值由<code> this.getCandidateConfigurations(annotationMetadata, attributes)</code>方法得到</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> List&lt;String&gt; <span class="title">getCandidateConfigurations</span><span class="params">(AnnotationMetadata metadata, AnnotationAttributes attributes)</span> </span>&#123;</span><br><span class="line">	List&lt;String&gt; configurations = SpringFactoriesLoader.loadFactoryNames(<span class="keyword">this</span>.getSpringFactoriesLoaderFactoryClass(), 	<span class="keyword">this</span>.getBeanClassLoader());</span><br><span class="line">    Assert.notEmpty(configurations, <span class="string">&quot;No auto configuration classes found in META-INF/spring.factories. If you are using a custom packaging, make sure that file is correct.&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> configurations;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>loadFactoryNames(Class&lt;?&gt; factoryType, @Nullable ClassLoader classLoader)</code>方法的功能是获取类路径下<code>/META-INF/spring.factories</code>文件中的指定属性值</p>
+<p><img src="1-1.jpg" class="lazyload" data-srcset="1-1.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p>在实际运行中，会获取<code>/META-INF/spring.factories</code>文件下的EnableAutoConfiguration中设置的所有类名，知道装配哪些类后，就可以将这些类装载到容器中。</p>
+<h2 id="自动装配的详细流程"><a href="#自动装配的详细流程" class="headerlink" title="自动装配的详细流程"></a>自动装配的详细流程</h2><p>启动SpringBoot程序，首先会新建一个SpringApplication对象，然后执行它的run()方法。</p>
+<blockquote>
+<p>启动类</p>
+<p><img src="2-1.jpg" class="lazyload" data-srcset="2-1.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p>进入run()方法</p>
+<p><img src="2-2.jpg" class="lazyload" data-srcset="2-2.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p>进入run()方法</p>
+<p><img src="2-3.jpg" class="lazyload" data-srcset="2-3.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+</blockquote>
+<p>在run()方法中，会新建一个context对象，然后对它进行初始化(设置环境、监听器、banner横幅、beanFactory)，初始化完成之后，会调用refreshContext()方法，该方法最终会调用Spring中AbstractApplicationContext中的refresh()方法，自动装配流程就在refresh()方法中完成。</p>
+<blockquote>
+<p>run()方法</p>
+<p><img src="3-1.jpg" class="lazyload" data-srcset="3-1.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p>一系列调用直至refresh()方法</p>
+<p><img src="3-2.jpg" class="lazyload" data-srcset="3-2.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="3-3.jpg" class="lazyload" data-srcset="3-3.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="3-4.jpg" class="lazyload" data-srcset="3-4.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="3-5.jpg" class="lazyload" data-srcset="3-5.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+</blockquote>
+<p>首先调用invokeBeanFactoryPostProcessors()方法找到要自动装配的类的全类名，这个过程在ConfigurationClassPostProcessor类中的processConfigBeanDefinitions()方法完成</p>
+<blockquote>
+<p><img src="4-1.jpg" class="lazyload" data-srcset="4-1.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="4-2.jpg" class="lazyload" data-srcset="4-2.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="4-3.jpg" class="lazyload" data-srcset="4-3.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="4-4.jpg" class="lazyload" data-srcset="4-4.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+</blockquote>
+<p>该方法会解析标注<code>@Configuration</code>注解的类，其中就包括启动类</p>
+<p><img src="5-1.jpg" class="lazyload" data-srcset="5-1.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p>解析是先通过启动类的类型(被注解标注/抽象/其他)去解析启动类标注<code>@Import</code>注解的内容，然后在根据内容去获得具体要解析的类名</p>
+<p><img src="6-1.jpg" class="lazyload" data-srcset="6-1.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p>先看是如何得到<code>@Import</code>注解的内容的，这里是注解标注。解析过程采用递归的方式去解析注解信息(@ComponentScan、@Import、@ImportSources)，这里关注解析@Import注解的方法，该方法有getImport()参数，getImport方法可以获得启动类<code>@EnableAutoConfig</code>注解中标注的<code>@Import</code>注解的内容</p>
+<blockquote>
+<p><img src="7-1.jpg" class="lazyload" data-srcset="7-1.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="7-2.jpg" class="lazyload" data-srcset="7-2.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="7-3.jpg" class="lazyload" data-srcset="7-3.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="7-4.jpg" class="lazyload" data-srcset="7-4.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+</blockquote>
+<p>拿到<code>@Import</code>注解的内容后，即AutoConfigurationImportSelector类，就会去解析该类获得要注册到IOC容器中的类的全类名，由<code>this.deferredImportSelectorHandler.process()</code>方法来完成这一过程</p>
+<p><img src="8-1.jpg" class="lazyload" data-srcset="8-1.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p>该方法经过一系列调用会执行到<code>getCandidationConfigurations()</code>方法，后序处理过程就和前文自动装配的大致流程中描述的一样了</p>
+<blockquote>
+<p><img src="9-1.jpg" class="lazyload" data-srcset="9-1.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="9-2.jpg" class="lazyload" data-srcset="9-2.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="9-3.jpg" class="lazyload" data-srcset="9-3.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="9-4.jpg" class="lazyload" data-srcset="9-4.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="9-5.jpg" class="lazyload" data-srcset="9-5.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+<p><img src="9-6.jpg" class="lazyload" data-srcset="9-6.jpg" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII="></p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>​    SpringBoot的自动装配发生在SpringApplication类的run()方法，该方法会调用refresh()方法，由refresh()中BeanFactory的后置处理器来发现要自动装配类的全类名。这个发现过程在ConfigurationClassPostProcessor类中，他会解析到启动类@Import注解中的ImportSelector接口的实现类，然后用getCandidataConfigurations()方法来加载到接口实现类中返回的类的全类名。</p>
+
+  
+  
+    
+    <div class='footer'>
       
-        <div>
-          <a class='readmore' href='/2022/03/15/Java%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8/'>
-            Read More
-          </a>
+      
+      
+        <div class='copyright'>
+          <blockquote>
+            
+              
+                <p>博客内容遵循 署名-非商业性使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0) 协议</p>
+
+              
+            
+              
+                <p>本文永久链接是：<a href=http://example.com/2022/04/08/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/>http://example.com/2022/04/08/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</a></p>
+              
+            
+          </blockquote>
         </div>
+      
       
     </div>
   
+  
+    
 
+
+  <div class='article-meta' id="bottom">
+    <div class='new-meta-box'>
+      
+        
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2022-04-09T10:26:05+08:00">
+  <a class='notlink'>
+    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
+    <p>更新于：Apr 9, 2022</p>
+  </a>
 </div>
 
-          </div>
         
       
         
-          <div class='post-wrapper'>
-            <div class="post post-v3 white-box reveal shadow">
+          
   
-  
-  
-  
-    
-    <h2 class="article-title" >
-      <a href="/2021/09/26/java%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">
-        java网络编程
-      </a>
-    </h2>
-  
-  <div class='md'>
-    
-      
-        java网络编程[toc]
-计算机网络基本概念概述什么是计算机网络计算机网络就是将在不同地方的多台计算机连接起来，实现资源的传输、共享。
-计算机网络三要素协议若计算机之间想要通讯，就必须遵循相同的协议。网络体系结构分为7层：应用层、表示层、会话层、传输层、网络层、数据链路层、物理层,，实际应用中一般分为5层(7层太过理想化，难以实现)：应用层、传输层、网络层、数据链路层、物理层。
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/%E6%A1%86%E6%9E%B6/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>框架</p></a></div>
 
-应用层：...
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://example.com/2022/04/08/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/&title=SpringBoot自动配置源码分析 - NeNe's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qq.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qq.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://example.com/2022/04/08/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/&title=SpringBoot自动配置源码分析 - NeNe's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qzone.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/qzone.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title="" rel="external nofollow noopener noreferrer noopener"
+          
+          target="_blank" href="http://service.weibo.com/share/share.php?url=http://example.com/2022/04/08/SpringBoot%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/&title=SpringBoot自动配置源码分析 - NeNe's Blog&summary="
+          
+          >
+          
+            <img src="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/weibo.png" class="lazyload" data-srcset="https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/logo/128/weibo.png" srcset="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=">
+          
+        </a>
+      
+    
+      
+    
       
     
   </div>
-  
-    <div class='meta-v3' line_style='solid'>
-      <div>
-        
-        <time>2021-09-26</time>
-        
-      </div>
-      
-        <div>
-          <a class='readmore' href='/2021/09/26/java%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/'>
-            Read More
-          </a>
-        </div>
-      
-    </div>
-  
-
 </div>
 
-          </div>
+
+
         
       
-        
-          <div class='post-wrapper'>
-            <div class="post post-v3 white-box reveal shadow">
-  
-  
-  
-  
-    
-    <h2 class="article-title" >
-      <a href="/2021/09/18/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/">
-        java反射机制
-      </a>
-    </h2>
-  
-  <div class='md'>
-    
-      
-        Java反射机制[toc]
-概述通过反射机制可以操作class文件。 
-反射机制的主要类包：java.lang.reflect.*
-主要类
-java.lang.Class：代表字节码文件
-java.lang.reflect.Methon：代表字节码文件中的方法
-java.lang.reflect.Filed：代表字节码文件中的属性（成员属性和类属性）
-java.lang.reflect.Co...
-      
-    
+    </div>
   </div>
+
+
   
-    <div class='meta-v3' line_style='solid'>
-      <div>
-        
-        <time>2021-09-18</time>
-        
-      </div>
+  
+
+  
+    <div class="prev-next">
       
-        <div>
-          <a class='readmore' href='/2021/09/18/java%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/'>
-            Read More
-          </a>
-        </div>
+      
+        <a class='next' href='/2022/03/24/Linux%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/'>
+          <p class='title'>Linux账户管理、进程管理<i class="fas fa-chevron-right" aria-hidden="true"></i></p>
+          <p class='content'>Linux账户管理、进程管理[toc]
+前言​    Linux是多用户多任务操作系统，所以熟悉用户账户和进程的管理是十分有必要的。
+账户管理账户概述Linux中账户分为用户账户和组账户。
+用户...</p>
+        </a>
       
     </div>
   
+</article>
 
+
+  
+
+  <article class="post white-box reveal shadow" id="comments">
+    <p ct><i class='fas fa-comments'></i> 评论</p>
+    
+    <div id="valine_container" class="valine_thread">
+  <i class="fas fa-cog fa-spin fa-fw fa-2x"></i>
 </div>
 
-          </div>
-        
-      
-    
-  </section>
-  
-    
-  
+  </article>
 
 
-    
-  
+
+
+
+
 </div>
 <aside class='l_side'>
   
@@ -612,103 +707,28 @@ java.lang.reflect.Co...
     
     
 
-<section class="widget blogger shadow desktop mobile">
-  <div class='content'>
-    
-      
-        <a class='avatar flat-box rectangle' href='/about/'>
-          <img no-lazy src='https://cdn.jsdelivr.net/gh/volantis-x/cdn-org/blog/Logo-NavBar@3x.png'/>
-        </a>
-      
-    
-    
-      <div class='text'>
-        
-        
-        
-          <p><span id="jinrishici-sentence">NeNe's Blog</span></p>
-          <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
-        
-      </div>
-    
-    
-      <div class="social-wrapper">
-        
-          
-            <a href="/atom.xml"
-              class="social fas fa-rss flat-btn"
-              target="_blank"
-              rel="external nofollow noopener noreferrer">
-              
-            </a>
-          
-        
-          
-            <a href="mailto:me@xxx.com"
-              class="social fas fa-envelope flat-btn"
-              target="_blank"
-              rel="external nofollow noopener noreferrer">
-              
-            </a>
-          
-        
-          
-            <a href="https://github.com/volantis-x/"
-              class="social fab fa-github flat-btn"
-              target="_blank"
-              rel="external nofollow noopener noreferrer">
-              
-            </a>
-          
-        
-          
-            <a href="/"
-              class="social fas fa-headphones-alt flat-btn"
-              target="_blank"
-              rel="external nofollow noopener noreferrer">
-              
-            </a>
-          
-        
-      </div>
-    
-  </div>
-</section>
 
-  
 
-  
-    
-    
-
-  
-
-  
-    
-    
-  
-
-  <section class="widget tagcloud shadow desktop mobile">
+  <section class="widget toc-wrapper shadow desktop mobile" id="toc-div" >
     
   <header>
     
-      <a href='/blog/tags/'><i class="fas fa-tags fa-fw" aria-hidden="true"></i><span class='name'>热门标签</span></a>
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class='name'>本文目录</span>
     
   </header>
 
 
     <div class='content'>
-      <a href="/tags/Linux/" style="font-size: 14px; color: #999">Linux</a> <a href="/tags/java/" style="font-size: 24px; color: #555">java</a> <a href="/tags/php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" style="font-size: 14px; color: #999">php反序列化</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 19px; color: #777">前端</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 14px; color: #999">数据库</a> <a href="/tags/%E6%A1%86%E6%9E%B6/" style="font-size: 24px; color: #555">框架</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 14px; color: #999">设计模式</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" style="font-size: 14px; color: #999">软件工程</a>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E7%9A%84%E5%A4%A7%E8%87%B4%E6%B5%81%E7%A8%8B"><span class="toc-text">自动装配的大致流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E7%9A%84%E8%AF%A6%E7%BB%86%E6%B5%81%E7%A8%8B"><span class="toc-text">自动装配的详细流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
     </div>
   </section>
 
 
   
 
-  
-
 
 </aside>
+
 
 
 		  
@@ -717,8 +737,8 @@ java.lang.reflect.Co...
 
 <script>
   window.pdata={}
-  pdata.ispage=false;
-  pdata.postTitle="";
+  pdata.ispage=true;
+  pdata.postTitle="SpringBoot自动配置源码分析";
   pdata.commentPath="";
   pdata.commentPlaceholder="";
   // header 这里无论是否开启pjax都需要
